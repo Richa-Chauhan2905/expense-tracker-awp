@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en" ng-app="expenseApp">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Report - Expenzo</title>
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="dashboard-style.css" />
+    <!-- Optional page-specific CSS -->
+    <link rel="stylesheet" href="expense-report.css" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <!-- App Script -->
+    <script src="app.js"></script>
+  </head>
+  <body ng-controller="ExpenseReportController as vm">
+    <div id="mainApp">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-content">
+          <button id="burgerMenu" class="burger-menu" ng-click="vm.toggleSidebar()">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="brand">
+            <img src="logo.png" alt="Expenzo Logo" />
+            <h1 class="app-title">Expenzo</h1>
+          </div>
+          <div class="user-info">
+            <span>Welcome, {{ vm.userName }}!</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Sidebar -->
+      <aside id="sidebar" class="sidebar" ng-class="{'open': vm.sidebarOpen}">
+        <div class="sidebar-header">
+          <h2>Dashboard</h2>
+          <button class="close-sidebar" ng-click="vm.toggleSidebar()">&times;</button>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="home.html" class="nav-item">🏠 Home</a>
+          <a href="manage-expenses.html" class="nav-item">💰 Manage Expenses</a>
+          <a href="expense-report.html" class="nav-item active">📊 Expense Report</a>
+          <a href="profile.html" class="nav-item">👤 Profile</a>
+          <a href="contact.html" class="nav-item">📧 Contact</a>
+          <a href="#" class="nav-item" ng-click="vm.logout()">🚪 Logout</a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Currency Icon -->
+        <div class="currency-icon-container">
+          <button class="currency-icon-btn" ng-click="vm.openCurrencyDialog()">
+            <span>{{ vm.currentCurrency.symbol }}</span>
+          </button>
+        </div>
+
+        <!-- Currency Dialog -->
+        <div id="currencyDialog" class="currency-dialog" ng-class="{'show': vm.showCurrencyDialog}">
+          <div class="currency-dialog-content">
+            <div class="currency-dialog-header">
+              <h3>Select Currency</h3>
+              <button class="close-btn" ng-click="vm.closeCurrencyDialog()">&times;</button>
+            </div>
+            <div class="currency-options">
+              <div class="currency-option" 
+                   ng-repeat="currency in vm.currencies" 
+                   ng-click="vm.selectCurrency(currency)"
+                   ng-class="{'selected': vm.currentCurrency.code === currency.code}">
+                <span class="currency-symbol">{{ currency.symbol }}</span>
+                <span class="currency-name">{{ currency.name }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expense Report Content -->
+        <div class="content-page active">
+          <div class="page-header">
+            <h2>Expense Report</h2>
+            <p>Visual breakdown of your spending</p>
+          </div>
+
+          <!-- Summary Cards -->
+          <div class="expense-summary">
+            <div class="summary-card">
+              <h3>Current Month</h3>
+              <div class="amount">{{ vm.formatCurrency(vm.currentMonthTotal) }}</div>
+              <div class="change" ng-class="{'positive': vm.monthOverMonthChange >= 0, 'negative': vm.monthOverMonthChange < 0}">
+                <span ng-if="vm.monthOverMonthChange >= 0">↑</span>
+                <span ng-if="vm.monthOverMonthChange < 0">↓</span>
+                {{ vm.monthOverMonthChange | number:1 }}% vs last month
+              </div>
+            </div>
+            <div class="summary-card">
+              <h3>Previous Month</h3>
+              <div class="amount">{{ vm.formatCurrency(vm.previousMonthTotal) }}</div>
+            </div>
+            <div class="summary-card">
+              <h3>Average Daily</h3>
+              <div class="amount">{{ vm.formatCurrency(vm.averageDaily) }}</div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="charts-row">
+            <div class="chart-card">
+              <h3>Current Month by Category</h3>
+              <div class="chart-container">
+                <canvas id="currentMonthChart"></canvas>
+              </div>
+            </div>
+            <div class="chart-card">
+              <h3>Previous Month by Category</h3>
+              <div class="chart-container">
+                <canvas id="previousMonthChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional Comparison Table -->
+          <div class="comparison-table" ng-if="vm.categoryComparison.length">
+            <h3>Category Comparison</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Current Month</th>
+                  <th>Previous Month</th>
+                  <th>Change</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="cat in vm.categoryComparison">
+                  <td>{{ cat.category | capitalize }}</td>
+                  <td>{{ vm.formatCurrency(cat.current) }}</td>
+                  <td>{{ vm.formatCurrency(cat.previous) }}</td>
+                  <td ng-class="{'positive': cat.change > 0, 'negative': cat.change < 0}">
+                    <span ng-if="cat.change > 0">↑</span>
+                    <span ng-if="cat.change < 0">↓</span>
+                    {{ cat.change | number:1 }}%
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Overlay -->
+    <div id="overlay" class="overlay" ng-class="{'show': vm.sidebarOpen || vm.showCurrencyDialog}" ng-click="vm.closeAllModals()"></div>
+
+    <!-- Page-specific JavaScript (for charts) - must be after AngularJS because it uses vm data) -->
+    <script src="expense-report.js"></script>
+  </body>
+</html>

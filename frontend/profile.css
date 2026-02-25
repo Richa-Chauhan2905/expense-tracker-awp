@@ -1,0 +1,113 @@
+/* Profile Page Specific Styles */
+
+.profile-card-large {
+  background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 20px;
+  padding: 3rem;
+  backdrop-filter: blur(10px);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.profile-avatar {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.avatar-circle {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1.2rem;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+}
+
+.profile-avatar h3 {
+  color: #f1f5f9;
+  margin-bottom: 0.3rem;
+  font-size: 1.8rem;
+}
+
+.member-since {
+  color: #94a3b8;
+  font-size: 1rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  color: #94a3b8;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  color: #f1f5f9;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  height: 50px; /* increased height */
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+  background: rgba(30, 41, 59, 0.9);
+}
+
+.form-actions {
+  margin-top: 2.5rem;
+  text-align: right;
+}
+
+.btn-primary {
+  padding: 0.9rem 2rem;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-card-large {
+    padding: 2rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .avatar-circle {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+  }
+  
+  .profile-avatar h3 {
+    font-size: 1.5rem;
+  }
+}
