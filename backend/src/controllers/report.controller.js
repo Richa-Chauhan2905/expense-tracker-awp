@@ -51,7 +51,8 @@ export const compareMonthsReport = async (req, res) => {
         currentTotal: currentData.monthTotal,
         previousTotal: previousData.monthTotal,
         difference,
-        differenceType: difference > 0 ? "positive" : difference < 0 ? "negative" : "neutral",
+        differenceType:
+          difference > 0 ? "positive" : difference < 0 ? "negative" : "neutral",
       },
     });
   } catch (error) {

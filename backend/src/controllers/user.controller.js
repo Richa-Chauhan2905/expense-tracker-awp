@@ -8,10 +8,14 @@ export const signup = async (req, res) => {
 
   try {
     if (!fullName || !email || !password) {
-      return res.status(400).json({ message: "Full name, email and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Full name, email and password are required" });
     }
     if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters" });
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
     }
 
     const existing = await User.findOne({ email: email.toLowerCase() });
@@ -57,7 +61,9 @@ export const login = async (req, res) => {
 
   try {
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
 
     const user = await User.findOne({ email: email.toLowerCase() });
@@ -119,12 +125,17 @@ export const updateProfile = async (req, res) => {
     const { fullName, email, phone, address, city, state } = req.body;
 
     if (!fullName || !email) {
-      return res.status(400).json({ message: "Full name and email are required" });
+      return res
+        .status(400)
+        .json({ message: "Full name and email are required" });
     }
 
     // Email uniqueness check (excluding current user)
     const emailLower = email.toLowerCase();
-    const emailTaken = await User.findOne({ email: emailLower, _id: { $ne: userId } });
+    const emailTaken = await User.findOne({
+      email: emailLower,
+      _id: { $ne: userId },
+    });
     if (emailTaken) {
       return res.status(400).json({ message: "Email already in use" });
     }
@@ -139,7 +150,7 @@ export const updateProfile = async (req, res) => {
         city: city || "",
         state: state || "",
       },
-      { new: true }
+      { new: true },
     ).select("-password");
 
     return res.status(200).json(updated);

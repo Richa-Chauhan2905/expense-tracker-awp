@@ -12,8 +12,11 @@ export const setMonthlyBudget = async (req, res) => {
 
     const updated = await Budget.findOneAndUpdate(
       { user: userId, month },
-      { amount: Number(amount), currency: req.user.currencyPreference || "INR" },
-      { upsert: true, new: true }
+      {
+        amount: Number(amount),
+        currency: req.user.currencyPreference || "INR",
+      },
+      { upsert: true, new: true },
     );
 
     return res.status(200).json(updated);

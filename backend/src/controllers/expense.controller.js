@@ -17,7 +17,9 @@ export const createExpense = async (req, res) => {
     const { expenseDate, amount, title, category, currencyAtTime } = req.body;
 
     if (!expenseDate || !amount || !title || !category) {
-      return res.status(400).json({ message: "All required fields must be filled" });
+      return res
+        .status(400)
+        .json({ message: "All required fields must be filled" });
     }
 
     const receipt = req.file
