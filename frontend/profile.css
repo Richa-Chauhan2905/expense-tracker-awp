@@ -1,15 +1,24 @@
-/* Profile Page Specific Styles */
+/* =============================================
+   PROFILE PAGE – Mature, Premium Dark Theme
+   Warm slate background | Amber accent
+============================================= */
 
 .profile-card-large {
-  background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-  border: 1px solid rgba(56, 189, 248, 0.15);
-  border-radius: 20px;
+  background: rgba(26, 30, 40, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 28px;
   padding: 3rem;
-  backdrop-filter: blur(10px);
   max-width: 900px;
   margin: 0 auto;
+  transition: border-color 0.2s;
 }
 
+.profile-card-large:hover {
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+/* Avatar section */
 .profile-avatar {
   text-align: center;
   margin-bottom: 2.5rem;
@@ -19,28 +28,36 @@
   width: 120px;
   height: 120px;
   margin: 0 auto 1.2rem;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: #f59e0b;
+  /* solid amber background */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 3rem;
-  font-weight: bold;
-  color: white;
-  box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+  font-weight: 600;
+  color: #161a24;
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);
+  transition: transform 0.2s;
+}
+
+.avatar-circle:hover {
+  transform: scale(1.02);
 }
 
 .profile-avatar h3 {
-  color: #f1f5f9;
+  color: #e9edf2;
   margin-bottom: 0.3rem;
   font-size: 1.8rem;
+  font-weight: 500;
 }
 
 .member-since {
-  color: #94a3b8;
-  font-size: 1rem;
+  color: #9aa5bf;
+  font-size: 0.9rem;
 }
 
+/* Form rows – consistent with dashboard */
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -55,59 +72,85 @@
 }
 
 .form-group label {
-  color: #94a3b8;
-  font-size: 1rem;
+  color: #9aa5bf;
+  font-size: 0.8rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-group input,
 .form-group select {
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  border-radius: 10px;
+  background: #10141c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
   padding: 0.9rem 1rem;
-  color: #f1f5f9;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  height: 50px; /* increased height */
+  color: #e9edf2;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  height: 50px;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
-  background: rgba(30, 41, 59, 0.9);
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+  background: #12161f;
 }
 
+/* Form actions – save button */
 .form-actions {
   margin-top: 2.5rem;
   text-align: right;
 }
 
 .btn-primary {
+  background: #f59e0b;
+  color: #161a24;
+  border: none;
+  border-radius: 40px;
   padding: 0.9rem 2rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
+}
+
+.btn-primary:hover {
+  background: #e68a00;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(245, 158, 11, 0.3);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .profile-card-large {
-    padding: 2rem;
+    padding: 1.8rem;
+    border-radius: 24px;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .avatar-circle {
     width: 100px;
     height: 100px;
     font-size: 2.5rem;
   }
-  
+
   .profile-avatar h3 {
     font-size: 1.5rem;
+  }
+
+  .form-actions {
+    text-align: center;
+  }
+
+  .btn-primary {
+    width: 100%;
   }
 }

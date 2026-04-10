@@ -1,36 +1,119 @@
-/* Expense Report Page Styles */
+/* =============================================
+   EXPENSE REPORT – Apple‑inspired Minimalist Dark
+   Neutral slate base | Amber accent
+============================================= */
+
+/* Charts Row – spacious grid */
+/* Increase space between page title and summary cards */
+.page-header {
+  margin-bottom: 2rem;   /* creates gap below "Expense Report" */
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  color: #e9edf2;
+}
+
+/* Ensure first card doesn't have negative margin */
+.expense-summary {
+  margin-top: 0;
+}
 
 .charts-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
-  margin: 2rem 0;
+  margin: 2.5rem 0;
 }
 
+/* Chart Cards – crisp, light glassmorphism */
 .chart-card {
-  background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-  border: 1px solid rgba(56, 189, 248, 0.15);
-  border-radius: 16px;
-  padding: 1.5rem;
-  backdrop-filter: blur(10px);
+  background: rgba(18, 22, 28, 0.7);
+  backdrop-filter: blur(4px);
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 1.8rem;
+  transition: transform 0.2s ease, border-color 0.2s;
+}
+
+.chart-card:hover {
+  border-color: rgba(245, 158, 11, 0.2);
+  transform: translateY(-3px);
 }
 
 .chart-card h3 {
-  color: #38bdf8;
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: #9aa5bf;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* Chart canvas container */
 .chart-container {
   position: relative;
-  height: 300px;
+  height: 280px;
   width: 100%;
+  margin-top: 0.5rem;
 }
 
-.change {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
+/* Summary Cards – consistent with dashboard but refined */
+.expense-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  background: rgba(18, 22, 28, 0.6);
+  backdrop-filter: blur(8px);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 1.5rem 1.8rem;
+  transition: all 0.25s;
+}
+
+.summary-card:hover {
+  border-color: rgba(245, 158, 11, 0.25);
+  background: rgba(18, 22, 28, 0.8);
+}
+
+.summary-card h3 {
+  font-size: 0.8rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8f9bb3;
+  margin-bottom: 0.6rem;
+}
+
+.summary-card .amount {
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #f0f3fa;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+/* Month-over-month change indicator */
+.change {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.2rem 0.7rem;
+  border-radius: 40px;
+  backdrop-filter: blur(2px);
 }
 
 .change.positive {
@@ -38,61 +121,123 @@
 }
 
 .change.negative {
-  color: #ef4444;
+  color: #f97316;
 }
 
+/* Comparison Table – clean, minimal */
 .comparison-table {
-  background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-  border: 1px solid rgba(56, 189, 248, 0.15);
-  border-radius: 16px;
+  background: rgba(18, 22, 28, 0.5);
+  backdrop-filter: blur(4px);
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
   padding: 1.5rem;
   margin-top: 2rem;
   overflow-x: auto;
 }
 
 .comparison-table h3 {
-  color: #38bdf8;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e9edf2;
   margin-bottom: 1rem;
+  letter-spacing: -0.2px;
+  display: inline-block;
+  border-left: 3px solid #f59e0b;
+  padding-left: 0.8rem;
 }
 
+/* Table styling – no dividers everywhere, just clean rows */
 .comparison-table table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.9rem;
 }
 
 .comparison-table th {
   text-align: left;
-  padding: 0.75rem;
-  color: #94a3b8;
+  padding: 1rem 0.5rem 0.8rem 0.5rem;
+  color: #8f9bb3;
   font-weight: 500;
-  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .comparison-table td {
-  padding: 0.75rem;
+  padding: 0.9rem 0.5rem;
   color: #e2e8f0;
-  border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  font-weight: 450;
 }
 
 .comparison-table tr:last-child td {
   border-bottom: none;
 }
 
+/* Positive / negative change colors in table */
 .comparison-table td.positive {
   color: #10b981;
+  font-weight: 500;
 }
 
 .comparison-table td.negative {
-  color: #ef4444;
+  color: #f97316;
+  font-weight: 500;
 }
 
+/* Category badges (optional, if shown inside table) */
+.category-badge {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  border-radius: 30px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e6;
+}
+
+/* Responsive – stack charts on mobile */
 @media (max-width: 768px) {
   .charts-row {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
   }
-  
+
   .chart-container {
-    height: 250px;
+    height: 220px;
   }
+
+  .summary-card .amount {
+    font-size: 1.6rem;
+  }
+
+  .comparison-table {
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 0.6rem 0.3rem;
+  }
+}
+
+/* Smooth loading / fade-in for charts */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.charts-row,
+.expense-summary,
+.comparison-table {
+  animation: fadeSlideUp 0.4s ease-out forwards;
 }

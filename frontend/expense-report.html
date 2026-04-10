@@ -25,7 +25,11 @@
       <!-- Header -->
       <header class="header">
         <div class="header-content">
-          <button id="burgerMenu" class="burger-menu" ng-click="vm.toggleSidebar()">
+          <button
+            id="burgerMenu"
+            class="burger-menu"
+            ng-click="vm.toggleSidebar()"
+          >
             <span></span><span></span><span></span>
           </button>
           <div class="brand">
@@ -42,12 +46,16 @@
       <aside id="sidebar" class="sidebar" ng-class="{'open': vm.sidebarOpen}">
         <div class="sidebar-header">
           <h2>Dashboard</h2>
-          <button class="close-sidebar" ng-click="vm.toggleSidebar()">&times;</button>
+          <button class="close-sidebar" ng-click="vm.toggleSidebar()">
+            &times;
+          </button>
         </div>
         <nav class="sidebar-nav">
           <a href="home.html" class="nav-item">🏠 Home</a>
           <a href="manage-expenses.html" class="nav-item">💰 Manage Expenses</a>
-          <a href="expense-report.html" class="nav-item active">📊 Expense Report</a>
+          <a href="expense-report.html" class="nav-item active"
+            >📊 Expense Report</a
+          >
           <a href="profile.html" class="nav-item">👤 Profile</a>
           <a href="contact.html" class="nav-item">📧 Contact</a>
           <a href="#" class="nav-item" ng-click="vm.logout()">🚪 Logout</a>
@@ -64,17 +72,25 @@
         </div>
 
         <!-- Currency Dialog -->
-        <div id="currencyDialog" class="currency-dialog" ng-class="{'show': vm.showCurrencyDialog}">
+        <div
+          id="currencyDialog"
+          class="currency-dialog"
+          ng-class="{'show': vm.showCurrencyDialog}"
+        >
           <div class="currency-dialog-content">
             <div class="currency-dialog-header">
               <h3>Select Currency</h3>
-              <button class="close-btn" ng-click="vm.closeCurrencyDialog()">&times;</button>
+              <button class="close-btn" ng-click="vm.closeCurrencyDialog()">
+                &times;
+              </button>
             </div>
             <div class="currency-options">
-              <div class="currency-option" 
-                   ng-repeat="currency in vm.currencies" 
-                   ng-click="vm.selectCurrency(currency)"
-                   ng-class="{'selected': vm.currentCurrency.code === currency.code}">
+              <div
+                class="currency-option"
+                ng-repeat="currency in vm.currencies"
+                ng-click="vm.selectCurrency(currency)"
+                ng-class="{'selected': vm.currentCurrency.code === currency.code}"
+              >
                 <span class="currency-symbol">{{ currency.symbol }}</span>
                 <span class="currency-name">{{ currency.name }}</span>
               </div>
@@ -86,15 +102,19 @@
         <div class="content-page active">
           <div class="page-header">
             <h2>Expense Report</h2>
-            <p>Visual breakdown of your spending</p>
           </div>
 
           <!-- Summary Cards -->
           <div class="expense-summary">
             <div class="summary-card">
               <h3>Current Month</h3>
-              <div class="amount">{{ vm.formatCurrency(vm.currentMonthTotal) }}</div>
-              <div class="change" ng-class="{'positive': vm.monthOverMonthChange >= 0, 'negative': vm.monthOverMonthChange < 0}">
+              <div class="amount">
+                {{ vm.formatCurrency(vm.currentMonthTotal) }}
+              </div>
+              <div
+                class="change"
+                ng-class="{'positive': vm.monthOverMonthChange >= 0, 'negative': vm.monthOverMonthChange < 0}"
+              >
                 <span ng-if="vm.monthOverMonthChange >= 0">↑</span>
                 <span ng-if="vm.monthOverMonthChange < 0">↓</span>
                 {{ vm.monthOverMonthChange | number:1 }}% vs last month
@@ -102,7 +122,9 @@
             </div>
             <div class="summary-card">
               <h3>Previous Month</h3>
-              <div class="amount">{{ vm.formatCurrency(vm.previousMonthTotal) }}</div>
+              <div class="amount">
+                {{ vm.formatCurrency(vm.previousMonthTotal) }}
+              </div>
             </div>
             <div class="summary-card">
               <h3>Average Daily</h3>
@@ -143,7 +165,9 @@
                   <td>{{ cat.category | capitalize }}</td>
                   <td>{{ vm.formatCurrency(cat.current) }}</td>
                   <td>{{ vm.formatCurrency(cat.previous) }}</td>
-                  <td ng-class="{'positive': cat.change > 0, 'negative': cat.change < 0}">
+                  <td
+                    ng-class="{'positive': cat.change > 0, 'negative': cat.change < 0}"
+                  >
                     <span ng-if="cat.change > 0">↑</span>
                     <span ng-if="cat.change < 0">↓</span>
                     {{ cat.change | number:1 }}%
@@ -157,7 +181,12 @@
     </div>
 
     <!-- Overlay -->
-    <div id="overlay" class="overlay" ng-class="{'show': vm.sidebarOpen || vm.showCurrencyDialog}" ng-click="vm.closeAllModals()"></div>
+    <div
+      id="overlay"
+      class="overlay"
+      ng-class="{'show': vm.sidebarOpen || vm.showCurrencyDialog}"
+      ng-click="vm.closeAllModals()"
+    ></div>
 
     <!-- Page-specific JavaScript (for charts) - must be after AngularJS because it uses vm data) -->
     <script src="expense-report.js"></script>
