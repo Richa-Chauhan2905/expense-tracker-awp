@@ -132,7 +132,10 @@ def ensure_edit_form_is_submittable(page):
     date_input = page.locator("#editDate")
     current_date = date_input.input_value().strip()
     if not current_date:
-        expense_date_text = page.locator(".expense-item").first.locator(".expense-date").text_content() or ""
+        expense_date_text = (
+            page.locator(".expense-item").first.locator(".expense-date").text_content()
+            or ""
+        )
         raise AssertionError(
             "Edit form date is empty before submit, so the browser blocks the form. "
             f"Visible row date text: {expense_date_text.strip()}"
@@ -170,14 +173,20 @@ def run_expense_tracker_tests():
         page.fill("input[ng-model='auth.signupData.fullName']", "TestUser")
         page.fill("input[ng-model='auth.signupData.email']", unique_email)
         page.fill("input[ng-model='auth.signupData.phone']", "9876543210")
-        page.select_option("select[ng-model='auth.signupData.currencyPreference']", "INR")
+        page.select_option(
+            "select[ng-model='auth.signupData.currencyPreference']", "INR"
+        )
         page.fill("input[ng-model='auth.signupData.city']", "Mumbai")
         page.fill("input[ng-model='auth.signupData.state']", "Maharashtra")
         page.fill("input[ng-model='auth.signupData.password']", "Test@123")
         page.fill("input[ng-model='auth.signupData.confirmPassword']", "Test@123")
 
-        with page.expect_response(api_matcher("/api/users/signup", "POST"), timeout=15000) as signup_response_info:
-            page.locator("form[ng-submit='auth.signup()'] button[type='submit']").click()
+        with page.expect_response(
+            api_matcher("/api/users/signup", "POST"), timeout=15000
+        ) as signup_response_info:
+            page.locator(
+                "form[ng-submit='auth.signup()'] button[type='submit']"
+            ).click()
 
         signup_response = signup_response_info.value
         if signup_response.status >= 400:
@@ -187,7 +196,8 @@ def run_expense_tracker_tests():
 
         wait_until(
             lambda: (
-                "Account created! Please login." in get_alert_text(page, ".alert.alert-success")
+                "Account created! Please login."
+                in get_alert_text(page, ".alert.alert-success")
                 or page.locator("form[ng-submit='auth.login()']").is_visible()
             ),
             timeout_ms=10000,
@@ -200,7 +210,9 @@ def run_expense_tracker_tests():
         page.fill("input[ng-model='auth.loginData.email']", unique_email)
         page.fill("input[ng-model='auth.loginData.password']", "Test@123")
 
-        with page.expect_response(api_matcher("/api/users/login", "POST"), timeout=15000) as login_response_info:
+        with page.expect_response(
+            api_matcher("/api/users/login", "POST"), timeout=15000
+        ) as login_response_info:
             page.locator("form[ng-submit='auth.login()'] button[type='submit']").click()
 
         login_response = login_response_info.value
@@ -219,7 +231,9 @@ def run_expense_tracker_tests():
         page.fill("#expenseItem", "Lunch at Cafe")
         page.fill("#expenseAmount", "12.50")
 
-        with page.expect_response(api_matcher("/api/expenses", "POST"), timeout=15000) as create_response_info:
+        with page.expect_response(
+            api_matcher("/api/expenses", "POST"), timeout=15000
+        ) as create_response_info:
             page.click("#expenseForm button[type='submit']")
 
         create_response = create_response_info.value
@@ -235,7 +249,9 @@ def run_expense_tracker_tests():
         )
 
         click_sidebar_link(page, "Manage Expenses")
-        wait_for_route_or_selector(page, r"#/(manage-expenses|expenses)$", "#expensesContainer")
+        wait_for_route_or_selector(
+            page, r"#/(manage-expenses|expenses)$", "#expensesContainer"
+        )
         expect(page.locator("#expensesContainer")).to_contain_text("Lunch at Cafe")
         print("  TC3 Add Expense: PASS")
 
@@ -249,7 +265,9 @@ def run_expense_tracker_tests():
         ensure_edit_form_is_submittable(page)
         page.fill("#editAmount", "15.00")
 
-        with page.expect_response(re.compile(r".*/api/expenses/[^/]+$"), timeout=15000) as update_response_info:
+        with page.expect_response(
+            re.compile(r".*/api/expenses/[^/]+$"), timeout=15000
+        ) as update_response_info:
             page.locator("#editModal button[type='submit']").click()
 
         update_response = update_response_info.value
@@ -262,7 +280,8 @@ def run_expense_tracker_tests():
 
         wait_for_modal_state(page, "#editModal", False)
         wait_until(
-            lambda: "15.00" in (page.locator("#expensesContainer").text_content() or ""),
+            lambda: "15.00"
+            in (page.locator("#expensesContainer").text_content() or ""),
             timeout_ms=10000,
             error_message="Updated expense amount did not appear in the expenses list.",
         )
@@ -272,7 +291,9 @@ def run_expense_tracker_tests():
         page.locator(".expense-item").first.locator(".delete-btn").click()
         wait_for_modal_state(page, "#deleteModal", True)
 
-        with page.expect_response(re.compile(r".*/api/expenses/[^/]+$"), timeout=15000) as delete_response_info:
+        with page.expect_response(
+            re.compile(r".*/api/expenses/[^/]+$"), timeout=15000
+        ) as delete_response_info:
             page.locator("#deleteModal .btn-danger", has_text="Delete").click()
 
         delete_response = delete_response_info.value
@@ -285,7 +306,8 @@ def run_expense_tracker_tests():
 
         wait_for_modal_state(page, "#deleteModal", False)
         wait_until(
-            lambda: "Lunch at Cafe" not in (page.locator("#expensesContainer").text_content() or ""),
+            lambda: "Lunch at Cafe"
+            not in (page.locator("#expensesContainer").text_content() or ""),
             timeout_ms=10000,
             error_message="Deleted expense still appears in the expenses list.",
         )
@@ -298,7 +320,9 @@ def run_expense_tracker_tests():
         page.wait_for_selector("#budgetForm", state="visible", timeout=10000)
         page.fill("#budgetInput", "500")
 
-        with page.expect_response(api_matcher("/api/budget", "PUT"), timeout=15000) as budget_response_info:
+        with page.expect_response(
+            api_matcher("/api/budget", "PUT"), timeout=15000
+        ) as budget_response_info:
             page.click("#saveBudgetBtn")
 
         budget_response = budget_response_info.value
@@ -316,7 +340,9 @@ def run_expense_tracker_tests():
 
         print("Running TC7: View Expense Report...")
         click_sidebar_link(page, "Expense Report")
-        wait_for_route_or_selector(page, r"#/(expense-report|reports)$", "#currentMonthChart")
+        wait_for_route_or_selector(
+            page, r"#/(expense-report|reports)$", "#currentMonthChart"
+        )
         expect(page.locator("#currentMonthChart")).to_be_visible()
         expect(page.locator("#previousMonthChart")).to_be_visible()
         print("  TC7 View Report: PASS")
@@ -328,13 +354,17 @@ def run_expense_tracker_tests():
         if logout_modal.count() > 0:
             try:
                 wait_for_modal_state(page, "#logoutModal", True, timeout_ms=3000)
-                with page.expect_response(api_matcher("/api/users/logout", "POST"), timeout=15000):
+                with page.expect_response(
+                    api_matcher("/api/users/logout", "POST"), timeout=15000
+                ):
                     page.locator("#logoutModal .btn-danger", has_text="Logout").click()
             except AssertionError:
                 pass
 
         if not page.url.endswith("#/login"):
-            wait_for_route_or_selector(page, r"#/login$", "form[ng-submit='auth.login()']")
+            wait_for_route_or_selector(
+                page, r"#/login$", "form[ng-submit='auth.login()']"
+            )
 
         expect(page.locator("form[ng-submit='auth.login()']")).to_be_visible()
         print("  TC8 Logout: PASS")
