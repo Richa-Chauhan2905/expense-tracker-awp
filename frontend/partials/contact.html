@@ -1,0 +1,152 @@
+<div id="mainApp">
+  <header class="header">
+    <div class="header-content">
+      <button id="burgerMenu" class="burger-menu" ng-click="vm.toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="brand">
+        <img src="../assets/images/logo.png" alt="Expenzo Logo" />
+        <h1 class="app-title">Expenzo</h1>
+      </div>
+      <div class="user-info">
+        <span>Welcome, {{ vm.userName }}!</span>
+      </div>
+    </div>
+  </header>
+
+  <aside id="sidebar" class="sidebar" ng-class="{'open': vm.sidebarOpen}">
+    <div class="sidebar-header">
+      <h2>Dashboard</h2>
+      <button class="close-sidebar" ng-click="vm.toggleSidebar()">&times;</button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="" ng-click="$event.preventDefault(); goTo('/home')" class="nav-item">Home</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/manage-expenses')" class="nav-item">Manage Expenses</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/expense-report')" class="nav-item">Expense Report</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/profile')" class="nav-item">Profile</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/contact')" class="nav-item active">Contact</a>
+      <a href="" class="nav-item" ng-click="vm.logout()">Logout</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="currency-icon-container">
+      <button class="currency-icon-btn" ng-click="vm.openCurrencyDialog()">
+        <span>{{ vm.currentCurrency.symbol }}</span>
+      </button>
+    </div>
+
+    <div id="currencyDialog" class="currency-dialog" ng-class="{'show': vm.showCurrencyDialog}">
+      <div class="currency-dialog-content">
+        <div class="currency-dialog-header">
+          <h3>Select Currency</h3>
+          <button class="close-btn" ng-click="vm.closeCurrencyDialog()">&times;</button>
+        </div>
+        <div class="currency-options">
+          <div
+            class="currency-option"
+            ng-repeat="currency in vm.currencies"
+            ng-click="vm.selectCurrency(currency)"
+            ng-class="{'selected': vm.currentCurrency.code === currency.code}"
+          >
+            <span class="currency-symbol">{{ currency.symbol }}</span>
+            <span class="currency-name">{{ currency.name }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-page active">
+      <div class="page-header">
+        <h2>Contact Admin</h2>
+        <p>Have a question or issue? Send us a message and we will get back to you.</p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-info-card">
+          <h3>Get in Touch</h3>
+          <div class="info-item">
+            <div>
+              <h4>Email</h4>
+              <p>support@expenzo.com</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div>
+              <h4>Response Time</h4>
+              <p>Within 24 hours</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form-card">
+          <form name="contactForm" ng-submit="vm.sendMessage()" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" ng-model="vm.ticket.name" required />
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" ng-model="vm.ticket.email" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="subject">Subject</label>
+                <select id="subject" ng-model="vm.ticket.issueType" required>
+                  <option value="general">General Inquiry</option>
+                  <option value="support">Technical Support</option>
+                  <option value="feature">Feature Request</option>
+                  <option value="bug">Bug Report</option>
+                  <option value="feedback">Feedback</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="priority">Priority</label>
+                <select id="priority" ng-model="vm.ticket.urgency" required>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="urgent">Urgent</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group full-width">
+              <label for="message">Message</label>
+              <textarea
+                id="message"
+                rows="6"
+                ng-model="vm.ticket.message"
+                placeholder="Describe your inquiry in detail..."
+                required
+              ></textarea>
+            </div>
+            <div class="form-actions" ng-if="vm.successMessage || vm.errorMessage">
+              <span ng-if="vm.successMessage">{{ vm.successMessage }}</span>
+              <span ng-if="vm.errorMessage">{{ vm.errorMessage }}</span>
+            </div>
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                ng-disabled="contactForm.$invalid || vm.sending"
+              >
+                <span ng-if="!vm.sending">Send Message</span>
+                <span ng-if="vm.sending">Sending...</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div
+  id="overlay"
+  class="overlay"
+  ng-class="{'show': vm.sidebarOpen || vm.showCurrencyDialog}"
+  ng-click="vm.closeAllModals()"
+></div>

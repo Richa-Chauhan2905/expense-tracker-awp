@@ -4,13 +4,13 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import path from "path";
 
-import { connectDB } from "./lib/db.js";
+import { connectDB } from "./src/lib/db.js";
 
-import userRoutes from "./routes/user.routes.js";
-import expenseRoutes from "./routes/expense.routes.js";
-import reportRoutes from "./routes/report.routes.js";
-import contactRoutes from "./routes/contact.routes.js";
-import budgetRoutes from "./routes/budget.routes.js";
+import userRoutes from "./src/routes/user.routes.js";
+import expenseRoutes from "./src/routes/expense.routes.js";
+import reportRoutes from "./src/routes/report.routes.js";
+import contactRoutes from "./src/routes/contact.routes.js";
+import budgetRoutes from "./src/routes/budget.routes.js";
 
 dotenv.config();
 
@@ -18,7 +18,15 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: [
+      process.env.CLIENT_URL || "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "http://localhost:5500",
+      "http://127.0.0.1:5500",
+      "http://localhost:4200",
+      "http://127.0.0.1:4200",
+      "http://192.168.29.74:4200",
+    ],
     credentials: true,
   }),
 );

@@ -1,0 +1,219 @@
+  <div>
+    <div class="logo-container">
+      <img
+        src="../assets/images/logo.png"
+        alt="Expenzo"
+        class="logo"
+        onerror="this.style.display = 'none'"
+      />
+    </div>
+
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-9 col-lg-6">
+          <div class="card card-dark shadow-lg p-4 rounded-4">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <h3 class="m-0">{{ auth.isLogin ? 'Login' : 'Sign Up' }}</h3>
+            </div>
+
+            <div class="alert alert-danger" ng-if="auth.error">
+              <i class="fas fa-exclamation-circle me-2"></i>{{ auth.error }}
+            </div>
+            <div class="alert alert-success" ng-if="auth.success">
+              <i class="fas fa-check-circle me-2"></i>{{ auth.success }}
+            </div>
+
+            <form
+              ng-if="auth.isLogin"
+              name="loginForm"
+              novalidate
+              ng-submit="auth.login()"
+            >
+              <div class="mb-3">
+                <label class="form-label">
+                  <i class="fas fa-envelope me-2"></i>Email *
+                </label>
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="you@example.com"
+                  ng-model="auth.loginData.email"
+                  required
+                />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">
+                  <i class="fas fa-lock me-2"></i>Password *
+                </label>
+                <input
+                  type="password"
+                  class="form-control"
+                  placeholder="Enter password"
+                  ng-model="auth.loginData.password"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary w-100"
+                ng-disabled="loginForm.$invalid || auth.isLoading"
+              >
+                <span ng-if="!auth.isLoading"
+                  ><i class="fas fa-sign-in-alt me-2"></i>Login</span
+                >
+                <span ng-if="auth.isLoading">
+                  <i class="fas fa-spinner fa-spin me-2"></i>Logging in...
+                </span>
+              </button>
+
+              <p class="text-center mt-3 mb-0">
+                New here?
+                <button
+                  type="button"
+                  class="btn btn-link link-primary p-0 border-0 align-baseline"
+                  ng-click="auth.setMode(false)"
+                >
+                  Create an account <i class="fas fa-arrow-right ms-1"></i>
+                </button>
+              </p>
+            </form>
+
+            <form
+              ng-if="!auth.isLogin"
+              name="signupForm"
+              novalidate
+              ng-submit="auth.signup()"
+            >
+              <div class="mb-3">
+                <label class="form-label">
+                  <i class="fas fa-user me-2"></i>Full Name *
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Your name"
+                  ng-model="auth.signupData.fullName"
+                  required
+                />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">
+                  <i class="fas fa-envelope me-2"></i>Email *
+                </label>
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="you@example.com"
+                  ng-model="auth.signupData.email"
+                  required
+                />
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">
+                    <i class="fas fa-phone me-2"></i>Phone (optional)
+                  </label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    placeholder="10-digit phone"
+                    ng-model="auth.signupData.phone"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">
+                    <i class="fas fa-coins me-2"></i>Currency
+                  </label>
+                  <select
+                    class="form-select"
+                    ng-model="auth.signupData.currencyPreference"
+                    ng-options="c for c in auth.currencies"
+                  ></select>
+                </div>
+              </div>
+
+              <div class="row g-3 mt-1">
+                <div class="col-md-6">
+                  <label class="form-label">
+                    <i class="fas fa-city me-2"></i>City (optional)
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="City"
+                    ng-model="auth.signupData.city"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">
+                    <i class="fas fa-map me-2"></i>State (optional)
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="State"
+                    ng-model="auth.signupData.state"
+                  />
+                </div>
+              </div>
+
+              <div class="row g-3 mt-1">
+                <div class="col-md-6">
+                  <label class="form-label">
+                    <i class="fas fa-lock me-2"></i>Password *
+                  </label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    placeholder="Min 6 characters"
+                    ng-model="auth.signupData.password"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">
+                    <i class="fas fa-check-circle me-2"></i>Confirm Password *
+                  </label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    placeholder="Re-enter password"
+                    ng-model="auth.signupData.confirmPassword"
+                    required
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary w-100 mt-3"
+                ng-disabled="signupForm.$invalid || auth.isLoading"
+              >
+                <span ng-if="!auth.isLoading">
+                  <i class="fas fa-user-plus me-2"></i>Create Account
+                </span>
+                <span ng-if="auth.isLoading">
+                  <i class="fas fa-spinner fa-spin me-2"></i>Creating account...
+                </span>
+              </button>
+
+              <p class="text-center mt-3 mb-0">
+                Already have an account?
+                <button
+                  type="button"
+                  class="btn btn-link link-primary p-0 border-0 align-baseline"
+                  ng-click="auth.setMode(true)"
+                >
+                  <i class="fas fa-sign-in-alt me-1"></i>Login
+                </button>
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
