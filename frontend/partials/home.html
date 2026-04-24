@@ -1,0 +1,352 @@
+      <!-- Main App -->
+      <div id="mainApp">
+        <!-- Header -->
+        <header class="header">
+          <div class="header-content">
+            <button
+              id="burgerMenu"
+              class="burger-menu"
+              ng-click="vm.toggleSidebar()"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+            <div class="brand">
+              <img src="../assets/images/logo.png" alt="Expense Tracker Logo" />
+              <h1 class="app-title">Expenzo</h1>
+            </div>
+            <div class="user-info">
+              <span id="welcomeUser">Welcome, {{ vm.userName }}!</span>
+            </div>
+          </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar" ng-class="{'open': vm.sidebarOpen}">
+          <div class="sidebar-header">
+            <h2>Dashboard</h2>
+            <button
+              id="closeSidebar"
+              class="close-sidebar"
+              ng-click="vm.toggleSidebar()"
+            >
+              &times;
+            </button>
+          </div>
+          <nav class="sidebar-nav">
+            <a
+              href="home.html"
+              class="nav-item"
+              ng-class="{'active': vm.currentPage === 'home'}"
+            >
+              <span class="nav-icon">🏠</span>
+              Home
+            </a>
+            <a href="manage-expenses.html" class="nav-item">
+              <span class="nav-icon">💰</span>
+              Manage Expenses
+            </a>
+            <a href="expense-report.html" class="nav-item">
+              <span class="nav-icon">📊</span>
+              Expense Report
+            </a>
+            <a href="profile.html" class="nav-item">
+              <span class="nav-icon">👤</span>
+              Profile
+            </a>
+            <a href="contact.html" class="nav-item">
+              <span class="nav-icon">📧</span>
+              Contact
+            </a>
+            <a href="#" class="nav-item" ng-click="vm.openLogoutModal()">
+              <span class="nav-icon">🚪</span>
+              Logout
+            </a>
+          </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <!-- Currency Icon -->
+          <div class="currency-icon-container">
+            <button
+              id="currencyIconBtn"
+              class="currency-icon-btn"
+              ng-click="vm.openCurrencyDialog()"
+            >
+              <span id="currentCurrencyIcon"
+                >{{ vm.currentCurrency.symbol }}</span
+              >
+            </button>
+          </div>
+
+          <!-- Currency Dialog -->
+          <div
+            id="currencyDialog"
+            class="currency-dialog"
+            ng-class="{'show': vm.showCurrencyDialog}"
+          >
+            <div class="currency-dialog-content">
+              <div class="currency-dialog-header">
+                <h3>Select Currency</h3>
+                <button
+                  id="closeCurrencyDialog"
+                  class="close-btn"
+                  ng-click="vm.closeCurrencyDialog()"
+                >
+                  &times;
+                </button>
+              </div>
+              <div class="currency-options">
+                <div
+                  class="currency-option"
+                  ng-repeat="currency in vm.currencies"
+                  ng-click="vm.selectCurrency(currency)"
+                  ng-class="{'selected': vm.currentCurrency.code === currency.code}"
+                >
+                  <span class="currency-symbol">{{ currency.symbol }}</span>
+                  <span class="currency-name">{{ currency.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Home Page Content -->
+          <div id="homePage" class="content-page active">
+            <div class="expense-summary">
+              <div class="summary-card">
+                <h3>This Month</h3>
+                <div class="amount" id="thisMonthTotal">
+                  {{ vm.formatCurrency(vm.thisMonthTotal) }}
+                </div>
+              </div>
+              <div class="summary-card">
+                <h3>Last Month</h3>
+                <div class="amount" id="lastMonthTotal">
+                  {{ vm.formatCurrency(vm.lastMonthTotal) }}
+                </div>
+              </div>
+              <div class="summary-card">
+                <h3>Monthly Budget</h3>
+                <div
+                  class="budget-container"
+                  id="budgetDisplay"
+                  ng-hide="vm.showBudgetForm"
+                >
+                  <div class="budget-info">
+                    <div class="amount" id="monthlyBudget">
+                      {{ vm.formatCurrency(vm.monthlyBudget) }}
+                    </div>
+                    <div class="budget-progress">
+                      <div class="progress-bar">
+                        <div
+                          class="progress-fill"
+                          id="budgetProgress"
+                          ng-style="{'width': vm.budgetProgress + '%', 'background': vm.budgetProgress > 100 ? '#ef4444' : '#10b981'}"
+                        ></div>
+                      </div>
+                      <div class="budget-status" id="budgetStatus">
+                        {{ vm.budgetStatus }}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    id="editBudgetBtn"
+                    class="budget-edit-btn"
+                    ng-click="vm.editBudget()"
+                  >
+                    <span>✏️</span>
+                  </button>
+                </div>
+                <div
+                  class="budget-form"
+                  id="budgetForm"
+                  ng-show="vm.showBudgetForm"
+                >
+                  <div class="budget-input-row">
+                    <input
+                      type="number"
+                      id="budgetInput"
+                      placeholder="Enter monthly budget"
+                      step="0.01"
+                      min="0"
+                      ng-model="vm.newBudget"
+                    />
+                    <button
+                      id="saveBudgetBtn"
+                      class="btn btn-primary"
+                      ng-click="vm.saveBudget()"
+                    >
+                      Save
+                    </button>
+                    <button
+                      id="cancelBudgetBtn"
+                      class="btn btn-secondary"
+                      ng-click="vm.cancelBudget()"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="expense-form-card">
+              <h3>Add New Expense</h3>
+              <form
+                id="expenseForm"
+                class="expense-form"
+                ng-submit="vm.addExpense()"
+              >
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="expenseDate">Date</label>
+                    <input
+                      type="date"
+                      id="expenseDate"
+                      ng-model="vm.newExpense.date"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="expenseCategory">Category</label>
+                    <select
+                      id="expenseCategory"
+                      ng-model="vm.newExpense.category"
+                      required
+                    >
+                      <option value="">Select Category</option>
+                      <option
+                        ng-repeat="cat in vm.categories"
+                        value="{{ cat.value }}"
+                      >
+                        {{ cat.label }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="expenseItem">Item/Description</label>
+                    <input
+                      type="text"
+                      id="expenseItem"
+                      placeholder="What did you spend on?"
+                      ng-model="vm.newExpense.description"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="expenseAmount">Amount</label>
+                    <div class="amount-upload-row">
+                      <input
+                        type="number"
+                        id="expenseAmount"
+                        placeholder="0.00"
+                        step="0.01"
+                        min="0"
+                        ng-model="vm.newExpense.amount"
+                        required
+                      />
+                      <div class="file-upload-container">
+                        <input
+                          type="file"
+                          id="expenseFile"
+                          accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+                          class="file-input"
+                          file-model="vm.newExpense.receipt"
+                        />
+                        <label
+                          for="expenseFile"
+                          class="file-upload-btn"
+                          title="Upload Receipt/File"
+                        >
+                          📎
+                        </label>
+                      </div>
+                      <div class="file-upload-status" id="expenseFileStatus">
+                        {{ vm.newExpense.receipt ? vm.newExpense.receipt.name : ''
+                        }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  ng-disabled="vm.addingExpense"
+                >
+                  Add Expense
+                </button>
+              </form>
+            </div>
+
+            <!-- Recent Expenses Preview -->
+            <div class="recent-expenses-preview">
+              <div class="preview-header">
+                <h3>Recent Expenses</h3>
+                <a href="manage-expenses.html" class="view-all-link"
+                  >View All →</a
+                >
+              </div>
+              <div id="recentExpensesList" class="recent-expenses-container">
+                <div class="loading-indicator" ng-if="vm.loadingRecent">
+                  Loading recent expenses...
+                </div>
+                <div
+                  class="no-expenses"
+                  ng-if="!vm.loadingRecent && vm.recentExpenses.length === 0"
+                >
+                  No recent expenses
+                </div>
+                <div
+                  class="recent-expense-item"
+                  ng-repeat="expense in vm.recentExpenses track by expense.id"
+                >
+                  <div class="expense-date">
+                    {{ expense.date | date:'MMM d, y' }}
+                  </div>
+                  <div class="expense-category">
+                    <span class="category-badge category-{{ expense.category }}">
+                      {{ expense.category | capitalize }}
+                    </span>
+                  </div>
+                  <div class="expense-description">{{ expense.description }}</div>
+                  <div class="expense-amount">
+                    {{ vm.formatCurrency(expense.amount) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Logout Confirmation Modal -->
+            <div
+              id="logoutModal"
+              class="modal"
+              ng-class="{'show': vm.showLogoutModal}"
+            >
+              <div class="modal-content">
+                <h3>Confirm Logout</h3>
+                <p>Are you sure you want to logout?</p>
+                <div class="modal-actions">
+                  <button class="btn btn-secondary" ng-click="vm.cancelLogout()">
+                    Cancel
+                  </button>
+                  <button class="btn btn-danger" ng-click="vm.confirmLogout()">
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <!-- Overlay -->
+      <div
+        id="overlay"
+        class="overlay"
+        ng-class="{'show': vm.sidebarOpen || vm.showCurrencyDialog}"
+        ng-click="vm.closeAllModals()"
+      ></div>
