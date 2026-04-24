@@ -11,5 +11,9 @@ app.service("ContactService", [
     this.getTickets = function () {
       return $http.get(ADMIN_BASE);
     };
+
+    this.replyToTicket = function (ticketId, payload) {
+      return $http.put(ADMIN_BASE + "/" + ticketId + "/reply", payload);
+    };
   },
 ]);

@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 
 import { connectDB } from "./src/lib/db.js";
+import { seedAdminUser } from "./src/lib/seedAdmin.js";
 
 import userRoutes from "./src/routes/user.routes.js";
 import expenseRoutes from "./src/routes/expense.routes.js";
@@ -49,6 +50,7 @@ app.use("/api/budget", budgetRoutes);
 const PORT = process.env.PORT || 5000;
 
 await connectDB();
+await seedAdminUser();
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });

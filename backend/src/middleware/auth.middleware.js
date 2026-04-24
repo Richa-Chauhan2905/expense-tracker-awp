@@ -22,3 +22,11 @@ export const protect = async (req, res, next) => {
     return res.status(401).json({ message: "Not authorized, token invalid" });
   }
 };
+
+export const requireAdmin = (req, res, next) => {
+  if (!req.user || !req.user.isAdmin) {
+    return res.status(403).json({ message: "Admin access required" });
+  }
+
+  next();
+};

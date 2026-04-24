@@ -1,30 +1,24 @@
 app.controller("AdminTicketsController", [
   "ContactService",
   "AuthService",
-  "CurrencyService",
   "$location",
-  function (ContactService, AuthService, CurrencyService, $location) {
+  function (ContactService, AuthService, $location) {
     var vm = this;
 
     vm.currentPage = "admin-tickets";
     vm.sidebarOpen = false;
-    vm.showCurrencyDialog = false;
     vm.loading = false;
     vm.errorMessage = "";
+    vm.successMessage = "";
     vm.userName = "Admin";
-    vm.currentCurrency = CurrencyService.getCurrentCurrency();
-    vm.currencies = CurrencyService.getCurrencies();
+    vm.accessDenied = false;
     vm.tickets = [];
+    vm.replyDrafts = {};
+    vm.replyingTicketId = null;
 
     function applyUser(user) {
       vm.user = user || null;
       vm.userName = user && user.fullName ? user.fullName : "Admin";
-
-      if (user && user.currencyPreference) {
-        vm.currentCurrency = CurrencyService.setCurrentCurrencyByCode(
-          user.currencyPreference,
-        );
-      }
     }
 
     function formatDate(value) {
@@ -53,35 +47,37 @@ app.controller("AdminTicketsController", [
         submittedAt: formatDate(ticket.createdAt),
         submittedBy:
           (ticket.user && ticket.user.fullName) || ticket.name || "Unknown user",
+        adminReply: ticket.adminReply || "",
+        repliedAt: formatDate(ticket.repliedAt),
+        repliedBy:
+          (ticket.repliedBy && ticket.repliedBy.fullName) || "Admin",
       };
     }
 
-    function loadUser() {
-      var currentUser = AuthService.getCurrentUser();
-      if (currentUser) {
-        applyUser(currentUser);
+    function loadTickets() {
+      if (!vm.user || !vm.user.isAdmin) {
+        vm.loading = false;
+        vm.accessDenied = true;
+        vm.errorMessage = "Admin access required.";
+        return;
       }
 
-      return AuthService.fetchMe()
-        .then(function (user) {
-          applyUser(user);
-        })
-        .catch(function () {
-          if (!currentUser) {
-            $location.path("/login");
-          }
-        });
-    }
-
-    function loadTickets() {
       vm.loading = true;
       vm.errorMessage = "";
+      vm.successMessage = "";
+      vm.accessDenied = false;
 
       ContactService.getTickets()
         .then(function (response) {
           vm.tickets = (response.data || []).map(normalizeTicket);
+          vm.tickets.forEach(function (ticket) {
+            vm.replyDrafts[ticket.id] = ticket.adminReply || "";
+          });
         })
         .catch(function (error) {
+          if (error.status === 403) {
+            vm.accessDenied = true;
+          }
           vm.errorMessage =
             (error.data && error.data.message) ||
             "Could not load submitted queries.";
@@ -91,26 +87,40 @@ app.controller("AdminTicketsController", [
         });
     }
 
+    function loadUser() {
+      var currentUser = AuthService.getCurrentUser();
+      if (currentUser) {
+        applyUser(currentUser);
+        if (currentUser.isAdmin) {
+          loadTickets();
+          return;
+        }
+      }
+
+      return AuthService.fetchMe()
+        .then(function (user) {
+          applyUser(user);
+          if (!user.isAdmin) {
+            vm.accessDenied = true;
+            vm.errorMessage = "Admin access required.";
+            $location.path("/login");
+            return;
+          }
+          loadTickets();
+        })
+        .catch(function () {
+          if (!currentUser) {
+            $location.path("/login");
+          }
+        });
+    }
+
     vm.toggleSidebar = function () {
       vm.sidebarOpen = !vm.sidebarOpen;
     };
 
-    vm.openCurrencyDialog = function () {
-      vm.showCurrencyDialog = true;
-    };
-
-    vm.closeCurrencyDialog = function () {
-      vm.showCurrencyDialog = false;
-    };
-
     vm.closeAllModals = function () {
       vm.sidebarOpen = false;
-      vm.showCurrencyDialog = false;
-    };
-
-    vm.selectCurrency = function (currency) {
-      vm.currentCurrency = CurrencyService.setCurrentCurrency(currency);
-      vm.closeCurrencyDialog();
     };
 
     vm.refreshTickets = function () {
@@ -129,6 +139,35 @@ app.controller("AdminTicketsController", [
         });
     };
 
+    vm.replyToTicket = function (ticket) {
+      var reply = vm.replyDrafts[ticket.id];
+      if (!reply || !reply.trim()) {
+        vm.errorMessage = "Reply message is required.";
+        vm.successMessage = "";
+        return;
+      }
+
+      vm.replyingTicketId = ticket.id;
+      vm.errorMessage = "";
+      vm.successMessage = "";
+
+      ContactService.replyToTicket(ticket.id, {
+        adminReply: reply,
+        status: "resolved",
+      })
+        .then(function () {
+          vm.successMessage = "Reply saved successfully.";
+          loadTickets();
+        })
+        .catch(function (error) {
+          vm.errorMessage =
+            (error.data && error.data.message) || "Could not save reply.";
+        })
+        .finally(function () {
+          vm.replyingTicketId = null;
+        });
+    };
+
     vm.logout = function () {
       AuthService.logout().finally(function () {
         $location.path("/login");
@@ -136,6 +175,5 @@ app.controller("AdminTicketsController", [
     };
 
     loadUser();
-    loadTickets();
   },
 ]);

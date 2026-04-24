@@ -133,6 +133,11 @@ app.config([
         controller: "AdminTicketsController",
         controllerAs: "vm",
       })
+      .when("/admin-users", {
+        templateUrl: "partials/admin-users.html",
+        controller: "AdminUsersController",
+        controllerAs: "vm",
+      })
       .otherwise({ redirectTo: "/login" });
   },
 ]);
@@ -143,6 +148,15 @@ app.run([
   "$location",
   "AuthService",
   function ($rootScope, $location, AuthService) {
+    var adminRoutes = {
+      "/admin-tickets": true,
+      "/admin-users": true,
+    };
+
+    function isAdminRoute(path) {
+      return !!adminRoutes[path];
+    }
+
     $rootScope.goTo = function (path) {
       $location.path(path);
     };
@@ -155,12 +169,31 @@ app.run([
       if (!AuthService.isAuthenticated()) {
         event.preventDefault();
         AuthService.fetchMe()
-          .then(function () {
+          .then(function (user) {
+            if (user && user.isAdmin && !isAdminRoute(next.originalPath)) {
+              $location.path("/admin-tickets");
+              return;
+            }
+
+            if (user && !user.isAdmin && isAdminRoute(next.originalPath)) {
+              $location.path("/home");
+              return;
+            }
+
             $location.path(next.originalPath);
           })
           .catch(function () {
             $location.path("/login");
           });
+      } else {
+        var currentUser = AuthService.getCurrentUser();
+        if (currentUser && currentUser.isAdmin && !isAdminRoute(next.originalPath)) {
+          event.preventDefault();
+          $location.path("/admin-tickets");
+        } else if (currentUser && !currentUser.isAdmin && isAdminRoute(next.originalPath)) {
+          event.preventDefault();
+          $location.path("/home");
+        }
       }
     });
   },

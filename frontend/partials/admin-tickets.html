@@ -6,62 +6,32 @@
       </button>
       <div class="brand">
         <img src="../assets/images/logo.png" alt="Expenzo Logo" />
-        <h1 class="app-title">Expenzo</h1>
+        <h1 class="app-title">Expenzo Admin</h1>
       </div>
       <div class="user-info">
-        <span>Welcome, {{ vm.userName }}!</span>
+        <span>Admin: {{ vm.userName }}</span>
       </div>
     </div>
   </header>
 
   <aside id="sidebar" class="sidebar" ng-class="{'open': vm.sidebarOpen}">
     <div class="sidebar-header">
-      <h2>Dashboard</h2>
+      <h2>Admin Panel</h2>
       <button class="close-sidebar" ng-click="vm.toggleSidebar()">&times;</button>
     </div>
     <nav class="sidebar-nav">
-      <a href="" ng-click="$event.preventDefault(); goTo('/home')" class="nav-item">Home</a>
-      <a href="" ng-click="$event.preventDefault(); goTo('/manage-expenses')" class="nav-item">Manage Expenses</a>
-      <a href="" ng-click="$event.preventDefault(); goTo('/expense-report')" class="nav-item">Expense Report</a>
-      <a href="" ng-click="$event.preventDefault(); goTo('/profile')" class="nav-item">Profile</a>
-      <a href="" ng-click="$event.preventDefault(); goTo('/contact')" class="nav-item">Contact</a>
-      <a href="" ng-click="$event.preventDefault(); goTo('/admin-tickets')" class="nav-item active">Admin Tickets</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/admin-tickets')" class="nav-item active">Tickets</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/admin-users')" class="nav-item">Users</a>
       <a href="" class="nav-item" ng-click="vm.logout()">Logout</a>
     </nav>
   </aside>
 
   <main class="main-content">
-    <div class="currency-icon-container">
-      <button class="currency-icon-btn" ng-click="vm.openCurrencyDialog()">
-        <span>{{ vm.currentCurrency.symbol }}</span>
-      </button>
-    </div>
-
-    <div id="currencyDialog" class="currency-dialog" ng-class="{'show': vm.showCurrencyDialog}">
-      <div class="currency-dialog-content">
-        <div class="currency-dialog-header">
-          <h3>Select Currency</h3>
-          <button class="close-btn" ng-click="vm.closeCurrencyDialog()">&times;</button>
-        </div>
-        <div class="currency-options">
-          <div
-            class="currency-option"
-            ng-repeat="currency in vm.currencies"
-            ng-click="vm.selectCurrency(currency)"
-            ng-class="{'selected': vm.currentCurrency.code === currency.code}"
-          >
-            <span class="currency-symbol">{{ currency.symbol }}</span>
-            <span class="currency-name">{{ currency.name }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="content-page active">
       <div class="page-header admin-header">
         <div>
-          <h2>Admin Tickets</h2>
-          <p>Review all user-submitted queries in one place.</p>
+          <h2>Ticket Inbox</h2>
+          <p>Reply to user contact tickets from one admin-only workspace.</p>
         </div>
         <button class="btn btn-primary" ng-click="vm.refreshTickets()" ng-disabled="vm.loading">
           <span ng-if="!vm.loading">Refresh</span>
@@ -71,6 +41,9 @@
 
       <div class="admin-error-banner" ng-if="vm.errorMessage">
         {{ vm.errorMessage }}
+      </div>
+      <div class="admin-success-banner" ng-if="vm.successMessage">
+        {{ vm.successMessage }}
       </div>
 
       <div class="tickets-board">
@@ -105,6 +78,29 @@
           </div>
 
           <p class="ticket-message">{{ ticket.message }}</p>
+
+          <div class="ticket-reply-block">
+            <label for="reply-{{ ticket.id }}">Admin Reply</label>
+            <textarea
+              id="reply-{{ ticket.id }}"
+              rows="4"
+              ng-model="vm.replyDrafts[ticket.id]"
+              placeholder="Write a response to this ticket..."
+            ></textarea>
+            <div class="ticket-reply-meta" ng-if="ticket.adminReply">
+              Last reply by {{ ticket.repliedBy }} on {{ ticket.repliedAt }}
+            </div>
+            <div class="ticket-reply-actions">
+              <button
+                class="btn btn-primary"
+                ng-click="vm.replyToTicket(ticket)"
+                ng-disabled="vm.replyingTicketId === ticket.id"
+              >
+                <span ng-if="vm.replyingTicketId !== ticket.id">Save Reply</span>
+                <span ng-if="vm.replyingTicketId === ticket.id">Saving...</span>
+              </button>
+            </div>
+          </div>
         </article>
       </div>
     </div>
@@ -114,6 +110,6 @@
 <div
   id="overlay"
   class="overlay"
-  ng-class="{'show': vm.sidebarOpen || vm.showCurrencyDialog}"
+  ng-class="{'show': vm.sidebarOpen}"
   ng-click="vm.closeAllModals()"
 ></div>

@@ -36,11 +36,40 @@ export const getTickets = async (req, res) => {
   try {
     const tickets = await ContactTicket.find()
       .sort({ createdAt: -1 })
-      .populate("user", "fullName email");
+      .populate("user", "fullName email")
+      .populate("repliedBy", "fullName email");
 
     return res.status(200).json(tickets);
   } catch (error) {
     console.log("Error in getTickets:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const replyToTicket = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { adminReply, status } = req.body;
+
+    if (!adminReply || !adminReply.trim()) {
+      return res.status(400).json({ message: "Reply message is required" });
+    }
+
+    const ticket = await ContactTicket.findById(id);
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    ticket.adminReply = adminReply.trim();
+    ticket.status = status || "resolved";
+    ticket.repliedAt = new Date();
+    ticket.repliedBy = req.user._id;
+    await ticket.save();
+    await ticket.populate("repliedBy", "fullName email");
+
+    return res.status(200).json(ticket);
+  } catch (error) {
+    console.log("Error in replyToTicket:", error.message);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

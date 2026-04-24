@@ -48,8 +48,8 @@ app.controller("AuthController", [
       vm.error = "";
 
       AuthService.login(vm.loginData)
-        .then(function () {
-          $location.path("/home");
+        .then(function (user) {
+          $location.path(user && user.isAdmin ? "/admin-tickets" : "/home");
         })
         .catch(function (err) {
           vm.error =

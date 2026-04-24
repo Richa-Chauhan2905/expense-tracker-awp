@@ -48,6 +48,7 @@ export const signup = async (req, res) => {
       city: newUser.city,
       state: newUser.state,
       currencyPreference: newUser.currencyPreference,
+      isAdmin: newUser.isAdmin,
     });
   } catch (error) {
     console.log("Error in signup controller:", error.message);
@@ -83,6 +84,7 @@ export const login = async (req, res) => {
       city: user.city,
       state: user.state,
       currencyPreference: user.currencyPreference,
+      isAdmin: user.isAdmin,
     });
   } catch (error) {
     console.log("Error in login controller:", error.message);
@@ -180,6 +182,19 @@ export const updateCurrency = async (req, res) => {
     });
   } catch (error) {
     console.log("Error in updateCurrency controller:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find()
+      .select("-password")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json(users);
+  } catch (error) {
+    console.log("Error in getAllUsers controller:", error.message);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

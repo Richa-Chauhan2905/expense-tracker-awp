@@ -12,5 +12,9 @@ app.service("UserService", [
         currencyPreference: currencyCode,
       });
     };
+
+    this.getAllUsers = function () {
+      return $http.get(API_BASE + "/admin/all");
+    };
   },
 ]);

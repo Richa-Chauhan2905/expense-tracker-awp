@@ -25,6 +25,10 @@ const contactSchema = new mongoose.Schema(
       default: "open",
       enum: ["open", "in_progress", "resolved", "closed"],
     },
+
+    adminReply: { type: String, default: "", trim: true },
+    repliedAt: { type: Date, default: null },
+    repliedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
   },
   { timestamps: true }
 );
