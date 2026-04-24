@@ -1,7 +1,7 @@
 app.service("ReportService", [
   "$http",
   function ($http) {
-    var API_BASE = "http://localhost:5000/api/reports";
+    var API_BASE = API_ROOT + "/reports";
 
     this.compareMonths = function (currentMonth, previousMonth) {
       return $http.get(API_BASE + "/compare", {

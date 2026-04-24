@@ -1,158 +1,262 @@
 app.controller("ManageExpensesController", [
   "ExpenseService",
-  "BudgetService",
   "CurrencyService",
   "AuthService",
   "$location",
-  "$timeout",
+  "$window",
   function (
     ExpenseService,
-    BudgetService,
     CurrencyService,
     AuthService,
     $location,
-    $timeout,
+    $window,
   ) {
     var vm = this;
 
+    vm.currentPage = "expenses";
+    vm.sidebarOpen = false;
+    vm.showCurrencyDialog = false;
+    vm.showEditModal = false;
+    vm.showDeleteModal = false;
+    vm.loading = false;
+    vm.userName = "User";
     vm.currentCurrency = CurrencyService.getCurrentCurrency();
+    vm.currencies = CurrencyService.getCurrencies();
     vm.expenses = [];
     vm.filteredExpenses = [];
-    vm.filters = { category: "", month: "" };
-    vm.currentPage = 1;
+    vm.pages = [];
+    vm.currentPageNumber = 1;
     vm.itemsPerPage = 10;
     vm.totalPages = 1;
-    vm.loading = false;
-
-    // Categories (matching backend)
+    vm.expenseToDelete = null;
+    vm.filters = {
+      category: "",
+      month: new Date().toISOString().slice(0, 7),
+    };
     vm.categories = [
-      "food",
-      "transport",
-      "shopping",
-      "entertainment",
-      "bills",
-      "health",
-      "education",
-      "travel",
-      "groceries",
-      "other",
+      { value: "food", label: "Food" },
+      { value: "transport", label: "Transport" },
+      { value: "shopping", label: "Shopping" },
+      { value: "entertainment", label: "Entertainment" },
+      { value: "bills", label: "Bills" },
+      { value: "health", label: "Health" },
+      { value: "education", label: "Education" },
+      { value: "travel", label: "Travel" },
+      { value: "groceries", label: "Groceries" },
+      { value: "other", label: "Other" },
     ];
+    vm.editExpense = {};
 
-    // Load expenses for a given month (default current month)
+    function normalizeExpense(expense) {
+      return {
+        id: expense._id,
+        _id: expense._id,
+        date: expense.expenseDate,
+        expenseDate: expense.expenseDate
+          ? expense.expenseDate.slice(0, 10)
+          : new Date().toISOString().slice(0, 10),
+        category: expense.category || "other",
+        description: expense.title || "",
+        title: expense.title || "",
+        amount: Number(expense.amount) || 0,
+        receipt:
+          expense.receipt && expense.receipt.url ? expense.receipt : null,
+      };
+    }
+
+    function buildPages() {
+      vm.pages = [];
+      for (var page = 1; page <= vm.totalPages; page += 1) {
+        vm.pages.push(page);
+      }
+    }
+
+    function setUser(user) {
+      vm.user = user || null;
+      vm.userName = user && user.fullName ? user.fullName : "User";
+
+      if (user && user.currencyPreference) {
+        vm.currentCurrency = CurrencyService.setCurrentCurrencyByCode(
+          user.currencyPreference,
+        );
+      }
+    }
+
+    function loadUser() {
+      var currentUser = AuthService.getCurrentUser();
+      if (currentUser) {
+        setUser(currentUser);
+      }
+
+      return AuthService.fetchMe()
+        .then(function (user) {
+          setUser(user);
+        })
+        .catch(function () {
+          if (!currentUser) {
+            $location.path("/login");
+          }
+        });
+    }
+
     function loadExpenses() {
       vm.loading = true;
-      var month = vm.filters.month || new Date().toISOString().slice(0, 7);
-      ExpenseService.getByMonth(month)
+
+      return ExpenseService.getByMonth(vm.filters.month)
         .then(function (response) {
-          vm.expenses = response.data;
+          vm.expenses = (response.data || []).map(normalizeExpense);
           vm.applyFilters();
-        })
-        .catch(function (error) {
-          if (error.status === 401) $location.path("/login");
         })
         .finally(function () {
           vm.loading = false;
         });
     }
 
-    // Filter and paginate
-    vm.applyFilters = function () {
-      var filtered = vm.expenses.filter(function (exp) {
-        var matchCategory =
-          !vm.filters.category || exp.category === vm.filters.category;
-        var matchMonth =
-          !vm.filters.month ||
-          (exp.expenseDate && exp.expenseDate.slice(0, 7) === vm.filters.month);
-        return matchCategory && matchMonth;
-      });
-      // Sort by date descending
-      filtered.sort(function (a, b) {
-        return new Date(b.expenseDate) - new Date(a.expenseDate);
-      });
-      vm.filteredExpenses = filtered;
-      vm.totalPages =
-        Math.ceil(vm.filteredExpenses.length / vm.itemsPerPage) || 1;
-      vm.goToPage(1);
+    vm.toggleSidebar = function () {
+      vm.sidebarOpen = !vm.sidebarOpen;
     };
 
-    vm.goToPage = function (page) {
-      vm.currentPage = page;
-    };
-
-    vm.clearFilters = function () {
-      vm.filters = { category: "", month: "" };
-      loadExpenses();
-    };
-
-    // Paginated slice
-    vm.paginatedExpenses = function () {
-      var start = (vm.currentPage - 1) * vm.itemsPerPage;
-      return vm.filteredExpenses.slice(start, start + vm.itemsPerPage);
-    };
-
-    // Delete expense
-    vm.deleteExpense = function (id) {
-      if (confirm("Are you sure you want to delete this expense?")) {
-        ExpenseService.delete(id)
-          .then(function () {
-            loadExpenses();
-          })
-          .catch(function (error) {
-            alert(error.data?.message || "Delete failed");
-          });
-      }
-    };
-
-    // Edit modal
-    vm.editExpense = { show: false, data: null };
-    vm.openEditModal = function (expense) {
-      vm.editExpense.data = angular.copy(expense);
-      vm.editExpense.show = true;
-    };
-    vm.closeEditModal = function () {
-      vm.editExpense.show = false;
-      vm.editExpense.data = null;
-    };
-    vm.saveEdit = function () {
-      var updatedData = {
-        expenseDate: vm.editExpense.data.expenseDate,
-        amount: vm.editExpense.data.amount,
-        title: vm.editExpense.data.title,
-        category: vm.editExpense.data.category,
-      };
-      ExpenseService.update(vm.editExpense.data._id, updatedData)
-        .then(function () {
-          vm.closeEditModal();
-          loadExpenses();
-        })
-        .catch(function (error) {
-          alert(error.data?.message || "Update failed");
-        });
-    };
-
-    // Currency handling
-    vm.currencies = CurrencyService.getCurrencies();
-    vm.showCurrencyDialog = false;
     vm.openCurrencyDialog = function () {
       vm.showCurrencyDialog = true;
     };
+
     vm.closeCurrencyDialog = function () {
       vm.showCurrencyDialog = false;
     };
+
     vm.selectCurrency = function (currency) {
-      CurrencyService.setCurrentCurrency(currency);
-      vm.currentCurrency = currency;
+      vm.currentCurrency = CurrencyService.setCurrentCurrency(currency);
       vm.closeCurrencyDialog();
     };
 
-    // Logout
+    vm.closeAllModals = function () {
+      vm.sidebarOpen = false;
+      vm.showCurrencyDialog = false;
+      vm.showEditModal = false;
+      vm.showDeleteModal = false;
+    };
+
+    vm.applyFilters = function () {
+      var filtered = vm.expenses.filter(function (expense) {
+        var matchCategory =
+          !vm.filters.category || expense.category === vm.filters.category;
+        var matchMonth =
+          !vm.filters.month ||
+          (expense.expenseDate &&
+            expense.expenseDate.slice(0, 7) === vm.filters.month);
+
+        return matchCategory && matchMonth;
+      });
+
+      vm.filteredExpenses = filtered;
+      vm.totalPages = Math.max(
+        1,
+        Math.ceil(vm.filteredExpenses.length / vm.itemsPerPage),
+      );
+      vm.goToPage(1);
+      buildPages();
+    };
+
+    vm.filterExpenses = function () {
+      if (!vm.filters.month) {
+        vm.filters.month = new Date().toISOString().slice(0, 7);
+      }
+      loadExpenses();
+    };
+
+    vm.goToPage = function (page) {
+      vm.currentPageNumber = page;
+    };
+
+    vm.paginatedExpenses = function () {
+      var start = (vm.currentPageNumber - 1) * vm.itemsPerPage;
+      return vm.filteredExpenses.slice(start, start + vm.itemsPerPage);
+    };
+
+    vm.clearFilters = function () {
+      vm.filters = {
+        category: "",
+        month: new Date().toISOString().slice(0, 7),
+      };
+      loadExpenses();
+    };
+
+    vm.openEditModal = function (expense) {
+      vm.editExpense = angular.copy(expense);
+      vm.showEditModal = true;
+    };
+
+    vm.closeEditModal = function () {
+      vm.editExpense = {};
+      vm.showEditModal = false;
+    };
+
+    vm.saveEdit = function () {
+      var updatedData = {
+        expenseDate: vm.editExpense.expenseDate,
+        amount: vm.editExpense.amount,
+        title: vm.editExpense.description,
+        category: vm.editExpense.category,
+      };
+
+      ExpenseService.update(vm.editExpense.id, updatedData).then(function () {
+        vm.closeEditModal();
+        loadExpenses();
+      });
+    };
+
+    vm.openDeleteModal = function (expense) {
+      vm.expenseToDelete = expense;
+      vm.showDeleteModal = true;
+    };
+
+    vm.closeDeleteModal = function () {
+      vm.expenseToDelete = null;
+      vm.showDeleteModal = false;
+    };
+
+    vm.confirmDelete = function () {
+      if (!vm.expenseToDelete) {
+        return;
+      }
+
+      ExpenseService.delete(vm.expenseToDelete.id).then(function () {
+        vm.closeDeleteModal();
+        loadExpenses();
+      });
+    };
+
+    vm.viewReceipt = function (expense) {
+      if (expense && expense.receipt && expense.receipt.url) {
+        $window.open(
+          window.location.protocol +
+            "//" +
+            window.location.hostname +
+            ":5000" +
+            expense.receipt.url,
+          "_blank",
+        );
+      }
+    };
+
     vm.logout = function () {
       AuthService.logout().finally(function () {
         $location.path("/login");
       });
     };
 
-    // Initial load
+    vm.formatCurrency = function (amount) {
+      return CurrencyService.formatAmount(amount, vm.currentCurrency.code);
+    };
+
+    vm.formatCategory = function (category) {
+      if (!category) {
+        return "Other";
+      }
+      return category.charAt(0).toUpperCase() + category.slice(1);
+    };
+
+    loadUser();
     loadExpenses();
   },
 ]);

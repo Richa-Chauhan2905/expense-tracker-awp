@@ -6,6 +6,11 @@
 /* Charts Row – spacious grid */
 /* Increase space between page title and summary cards */
 .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
   margin-bottom: 2rem;   /* creates gap below "Expense Report" */
 }
 
@@ -15,6 +20,28 @@
   font-weight: 500;
   letter-spacing: -0.2px;
   color: #e9edf2;
+}
+
+.download-report-btn {
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(249, 115, 22, 0.14));
+  color: #f8fafc;
+  border-radius: 999px;
+  padding: 0.8rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.download-report-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+.download-report-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 /* Ensure first card doesn't have negative margin */
@@ -199,6 +226,14 @@
 
 /* Responsive – stack charts on mobile */
 @media (max-width: 768px) {
+  .page-header {
+    align-items: stretch;
+  }
+
+  .download-report-btn {
+    width: 100%;
+  }
+
   .charts-row {
     grid-template-columns: 1fr;
     gap: 1.5rem;

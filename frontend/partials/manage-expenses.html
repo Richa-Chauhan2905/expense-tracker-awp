@@ -1,169 +1,191 @@
-    <div id="mainApp">
-      <!-- Header -->
-      <header class="header">
-        <div class="header-content">
-          <button id="burgerMenu" class="burger-menu" ng-click="vm.toggleSidebar()">
-            <span></span><span></span><span></span>
-          </button>
-          <div class="brand">
-            <img src="../assets/images/logo.png" alt="Expense Tracker Logo" />
-            <h1 class="app-title">Expenzo</h1>
-          </div>
-          <div class="user-info">
-            <span id="welcomeUser">Welcome, {{ vm.userName }}!</span>
-          </div>
-        </div>
-      </header>
+<div id="mainApp">
+  <header class="header">
+    <div class="header-content">
+      <button id="burgerMenu" class="burger-menu" ng-click="vm.toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="brand">
+        <img src="../assets/images/logo.png" alt="Expense Tracker Logo" />
+        <h1 class="app-title">Expenzo</h1>
+      </div>
+      <div class="user-info">
+        <span id="welcomeUser">Welcome, {{ vm.userName }}!</span>
+      </div>
+    </div>
+  </header>
 
-      <!-- Sidebar -->
-      <aside id="sidebar" class="sidebar" ng-class="{'open': vm.sidebarOpen}">
-        <div class="sidebar-header">
-          <h2>Dashboard</h2>
-          <button id="closeSidebar" class="close-sidebar" ng-click="vm.toggleSidebar()">&times;</button>
-        </div>
-        <nav class="sidebar-nav">
-          <a href="home.html" class="nav-item" ng-class="{'active': vm.currentPage === 'home'}">🏠 Home</a>
-          <a href="manage-expenses.html" class="nav-item active">💰 Manage Expenses</a>
-          <a href="expense-report.html" class="nav-item">📊 Expense Report</a>
-          <a href="profile.html" class="nav-item">👤 Profile</a>
-          <a href="contact.html" class="nav-item">📧 Contact</a>
-          <a href="#" class="nav-item" ng-click="vm.logout()">🚪 Logout</a>
-        </nav>
-      </aside>
+  <aside id="sidebar" class="sidebar" ng-class="{'open': vm.sidebarOpen}">
+    <div class="sidebar-header">
+      <h2>Dashboard</h2>
+      <button id="closeSidebar" class="close-sidebar" ng-click="vm.toggleSidebar()">
+        &times;
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="" ng-click="$event.preventDefault(); goTo('/home')" class="nav-item">Home</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/manage-expenses')" class="nav-item active">Manage Expenses</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/expense-report')" class="nav-item">Expense Report</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/profile')" class="nav-item">Profile</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/contact')" class="nav-item">Contact</a>
+      <a href="" class="nav-item" ng-click="vm.logout()">Logout</a>
+    </nav>
+  </aside>
 
-      <!-- Main Content -->
-      <main class="main-content">
-        <!-- Currency Icon -->
-        <div class="currency-icon-container">
-          <button id="currencyIconBtn" class="currency-icon-btn" ng-click="vm.openCurrencyDialog()">
-            <span id="currentCurrencyIcon">{{ vm.currentCurrency.symbol }}</span>
-          </button>
-        </div>
-
-        <!-- Currency Dialog -->
-        <div id="currencyDialog" class="currency-dialog" ng-class="{'show': vm.showCurrencyDialog}">
-          <div class="currency-dialog-content">
-            <div class="currency-dialog-header">
-              <h3>Select Currency</h3>
-              <button id="closeCurrencyDialog" class="close-btn" ng-click="vm.closeCurrencyDialog()">&times;</button>
-            </div>
-            <div class="currency-options">
-              <div class="currency-option" 
-                   ng-repeat="currency in vm.currencies" 
-                   ng-click="vm.selectCurrency(currency)"
-                   ng-class="{'selected': vm.currentCurrency.code === currency.code}">
-                <span class="currency-symbol">{{ currency.symbol }}</span>
-                <span class="currency-name">{{ currency.name }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Manage Expenses Content -->
-        <div class="content-page active">
-          <div class="page-header">
-            <h2>Manage Expenses</h2>
-            <p>View, edit, and delete your expenses</p>
-          </div>
-
-          <!-- Filter Controls -->
-          <div class="expenses-list">
-            <div class="expenses-header">
-              <h3>All Expenses</h3>
-              <div class="filter-controls">
-                <div class="filter-row">
-                  <div class="filter-group">
-                    <label for="filterCategory">Category:</label>
-                    <select id="filterCategory" ng-model="vm.filters.category" ng-change="vm.filterExpenses()">
-                      <option value="">All Categories</option>
-                      <option ng-repeat="cat in vm.categories" value="{{ cat.value }}">{{ cat.label }}</option>
-                    </select>
-                  </div>
-                  <div class="filter-group">
-                    <label for="filterMonth">Month:</label>
-                    <input type="month" id="filterMonth" ng-model="vm.filters.month" ng-change="vm.filterExpenses()" />
-                  </div>
-                  <button id="clearFilters" class="btn btn-secondary" ng-click="vm.clearFilters()">Clear Filters</button>
-                </div>
-                <div class="filter-help">
-                  <small>Select filters to narrow down your expenses</small>
-                </div>
-              </div>
-            </div>
-
-            <!-- Expenses Container -->
-            <div id="expensesContainer" class="expenses-container">
-              <div class="loading-indicator" ng-if="vm.loading">Loading expenses...</div>
-              <div class="no-expenses" ng-if="!vm.loading && vm.filteredExpenses.length === 0">No expenses found</div>
-              <div class="expense-item" ng-repeat="expense in vm.paginatedExpenses track by expense.id">
-                <div class="expense-date">{{ expense.date | date:'MMM d, y' }}</div>
-                <div class="expense-category">
-                  <span class="category-badge category-{{ expense.category }}">
-                    {{ expense.category | capitalize }}
-                  </span>
-                </div>
-                <div class="expense-description">{{ expense.description }}</div>
-                <div class="expense-amount">{{ vm.formatCurrency(expense.amount) }}</div>
-                <div class="expense-actions">
-                  <span class="expense-receipt" ng-if="expense.receipt" ng-click="vm.viewReceipt(expense.id)" title="View Receipt">📎</span>
-                  <button ng-click="vm.openEditModal(expense.id)" class="edit-btn" title="Edit Expense">✏️</button>
-                  <button ng-click="vm.openDeleteModal(expense.id)" class="delete-btn" title="Delete Expense">🗑️</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Pagination -->
-            <div id="pagination" class="pagination" ng-if="vm.totalPages > 1">
-              <button ng-click="vm.goToPage(1)" ng-disabled="vm.currentPage === 1">«</button>
-              <button ng-repeat="page in vm.pages" 
-                      ng-class="{'active': page === vm.currentPage}" 
-                      ng-click="vm.goToPage(page)">{{ page }}</button>
-              <button ng-click="vm.goToPage(vm.totalPages)" ng-disabled="vm.currentPage === vm.totalPages">»</button>
-            </div>
-          </div>
-        </div>
-      </main>
+  <main class="main-content">
+    <div class="currency-icon-container">
+      <button id="currencyIconBtn" class="currency-icon-btn" ng-click="vm.openCurrencyDialog()">
+        <span id="currentCurrencyIcon">{{ vm.currentCurrency.symbol }}</span>
+      </button>
     </div>
 
-    <!-- Edit Modal -->
-    <div id="editModal" class="modal" ng-class="{'show': vm.showEditModal}">
-      <h3>Edit Expense</h3>
-      <form ng-submit="vm.saveEdit()">
-        <div class="form-group">
-          <label for="editDate">Date</label>
-          <input type="date" id="editDate" ng-model="vm.editExpense.date" required />
+    <div id="currencyDialog" class="currency-dialog" ng-class="{'show': vm.showCurrencyDialog}">
+      <div class="currency-dialog-content">
+        <div class="currency-dialog-header">
+          <h3>Select Currency</h3>
+          <button id="closeCurrencyDialog" class="close-btn" ng-click="vm.closeCurrencyDialog()">
+            &times;
+          </button>
         </div>
-        <div class="form-group">
-          <label for="editCategory">Category</label>
-          <select id="editCategory" ng-model="vm.editExpense.category" required>
-            <option ng-repeat="cat in vm.categories" value="{{ cat.value }}">{{ cat.label }}</option>
-          </select>
+        <div class="currency-options">
+          <div
+            class="currency-option"
+            ng-repeat="currency in vm.currencies"
+            ng-click="vm.selectCurrency(currency)"
+            ng-class="{'selected': vm.currentCurrency.code === currency.code}"
+          >
+            <span class="currency-symbol">{{ currency.symbol }}</span>
+            <span class="currency-name">{{ currency.name }}</span>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="editDescription">Description</label>
-          <input type="text" id="editDescription" ng-model="vm.editExpense.description" required />
-        </div>
-        <div class="form-group">
-          <label for="editAmount">Amount</label>
-          <input type="number" id="editAmount" step="0.01" min="0" ng-model="vm.editExpense.amount" required />
-        </div>
-        <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" ng-click="vm.closeEditModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="modal" ng-class="{'show': vm.showDeleteModal}">
-      <h3>Confirm Delete</h3>
-      <p>Are you sure you want to delete this expense? This action cannot be undone.</p>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" ng-click="vm.closeDeleteModal()">Cancel</button>
-        <button class="btn btn-danger" ng-click="vm.confirmDelete()">Delete</button>
       </div>
     </div>
 
-    <!-- Overlay -->
-    <div id="overlay" class="overlay" ng-class="{'show': vm.sidebarOpen || vm.showCurrencyDialog || vm.showEditModal || vm.showDeleteModal}" ng-click="vm.closeAllModals()"></div>
-  
+    <div class="content-page active">
+      <div class="page-header">
+        <h2>Manage Expenses</h2>
+        <p>View, edit, and delete your expenses</p>
+      </div>
+
+      <div class="expenses-list">
+        <div class="expenses-header">
+          <h3>All Expenses</h3>
+          <div class="filter-controls">
+            <div class="filter-row">
+              <div class="filter-group">
+                <label for="filterCategory">Category:</label>
+                <select id="filterCategory" ng-model="vm.filters.category" ng-change="vm.filterExpenses()">
+                  <option value="">All Categories</option>
+                  <option ng-repeat="cat in vm.categories" value="{{ cat.value }}">
+                    {{ cat.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="filterMonth">Month:</label>
+                <input type="month" id="filterMonth" ng-model="vm.filters.month" ng-change="vm.filterExpenses()" />
+              </div>
+              <button id="clearFilters" class="btn btn-secondary" ng-click="vm.clearFilters()">
+                Clear Filters
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="expensesContainer" class="expenses-container">
+          <div class="loading-indicator" ng-if="vm.loading">Loading expenses...</div>
+          <div class="no-expenses" ng-if="!vm.loading && vm.filteredExpenses.length === 0">
+            No expenses found
+          </div>
+          <div class="expense-item" ng-repeat="expense in vm.paginatedExpenses() track by expense.id">
+            <div class="expense-date">{{ expense.date | date:'MMM d, y' }}</div>
+            <div class="expense-category">
+              <span class="category-badge category-{{ expense.category }}">
+                {{ vm.formatCategory(expense.category) }}
+              </span>
+            </div>
+            <div class="expense-description">{{ expense.description }}</div>
+            <div class="expense-amount">{{ vm.formatCurrency(expense.amount) }}</div>
+            <div class="expense-actions">
+              <span
+                class="expense-receipt"
+                ng-if="expense.receipt"
+                ng-click="vm.viewReceipt(expense)"
+                title="View Receipt"
+              >
+                Receipt
+              </span>
+              <button ng-click="vm.openEditModal(expense)" class="edit-btn" title="Edit Expense">
+                Edit
+              </button>
+              <button ng-click="vm.openDeleteModal(expense)" class="delete-btn" title="Delete Expense">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="pagination" class="pagination" ng-if="vm.totalPages > 1">
+          <button ng-click="vm.goToPage(1)" ng-disabled="vm.currentPageNumber === 1">&laquo;</button>
+          <button
+            ng-repeat="page in vm.pages"
+            ng-class="{'active': page === vm.currentPageNumber}"
+            ng-click="vm.goToPage(page)"
+          >
+            {{ page }}
+          </button>
+          <button ng-click="vm.goToPage(vm.totalPages)" ng-disabled="vm.currentPageNumber === vm.totalPages">
+            &raquo;
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="editModal" class="modal" ng-class="{'show': vm.showEditModal}">
+  <div class="modal-content">
+    <h3>Edit Expense</h3>
+    <form ng-submit="vm.saveEdit()">
+      <div class="form-group">
+        <label for="editDate">Date</label>
+        <input type="date" id="editDate" ng-model="vm.editExpense.expenseDate" required />
+      </div>
+      <div class="form-group">
+        <label for="editCategory">Category</label>
+        <select id="editCategory" ng-model="vm.editExpense.category" required>
+          <option ng-repeat="cat in vm.categories" value="{{ cat.value }}">{{ cat.label }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="editDescription">Description</label>
+        <input type="text" id="editDescription" ng-model="vm.editExpense.description" required />
+      </div>
+      <div class="form-group">
+        <label for="editAmount">Amount</label>
+        <input type="number" id="editAmount" step="0.01" min="0" ng-model="vm.editExpense.amount" required />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" ng-click="vm.closeEditModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="deleteModal" class="modal" ng-class="{'show': vm.showDeleteModal}">
+  <div class="modal-content">
+    <h3>Confirm Delete</h3>
+    <p>Are you sure you want to delete this expense? This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" ng-click="vm.closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" ng-click="vm.confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div
+  id="overlay"
+  class="overlay"
+  ng-class="{'show': vm.sidebarOpen || vm.showCurrencyDialog || vm.showEditModal || vm.showDeleteModal}"
+  ng-click="vm.closeAllModals()"
+></div>

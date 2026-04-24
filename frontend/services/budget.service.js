@@ -1,7 +1,7 @@
 app.service("BudgetService", [
   "$http",
   function ($http) {
-    var API_BASE = "http://localhost:5000/api/budget";
+    var API_BASE = API_ROOT + "/budget";
 
     this.get = function (month) {
       return $http.get(API_BASE, { params: { month: month } });

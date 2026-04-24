@@ -1,153 +1,144 @@
-    <div id="mainApp">
-      <!-- Header -->
-      <header class="header">
-        <div class="header-content">
-          <button
-            id="burgerMenu"
-            class="burger-menu"
-            ng-click="vm.toggleSidebar()"
-          >
-            <span></span><span></span><span></span>
-          </button>
-          <div class="brand">
-            <img src="../assets/images/logo.png" alt="Expenzo Logo" />
-            <h1 class="app-title">Expenzo</h1>
-          </div>
-          <div class="user-info">
-            <span>Welcome, {{ vm.user.name }}!</span>
-          </div>
-        </div>
-      </header>
+<div id="mainApp">
+  <header class="header">
+    <div class="header-content">
+      <button id="burgerMenu" class="burger-menu" ng-click="vm.toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="brand">
+        <img src="../assets/images/logo.png" alt="Expenzo Logo" />
+        <h1 class="app-title">Expenzo</h1>
+      </div>
+      <div class="user-info">
+        <span>Welcome, {{ vm.userName }}!</span>
+      </div>
+    </div>
+  </header>
 
-      <!-- Sidebar -->
-      <aside id="sidebar" class="sidebar" ng-class="{'open': vm.sidebarOpen}">
-        <div class="sidebar-header">
-          <h2>Dashboard</h2>
-          <button class="close-sidebar" ng-click="vm.toggleSidebar()">
-            &times;
-          </button>
-        </div>
-        <nav class="sidebar-nav">
-          <a href="home.html" class="nav-item">🏠 Home</a>
-          <a href="manage-expenses.html" class="nav-item">💰 Manage Expenses</a>
-          <a href="expense-report.html" class="nav-item">📊 Expense Report</a>
-          <a href="profile.html" class="nav-item active">👤 Profile</a>
-          <a href="contact.html" class="nav-item">📧 Contact</a>
-          <a href="#" class="nav-item" ng-click="vm.logout()">🚪 Logout</a>
-        </nav>
-      </aside>
+  <aside id="sidebar" class="sidebar" ng-class="{'open': vm.sidebarOpen}">
+    <div class="sidebar-header">
+      <h2>Dashboard</h2>
+      <button class="close-sidebar" ng-click="vm.toggleSidebar()">&times;</button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="" ng-click="$event.preventDefault(); goTo('/home')" class="nav-item">Home</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/manage-expenses')" class="nav-item">Manage Expenses</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/expense-report')" class="nav-item">Expense Report</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/profile')" class="nav-item active">Profile</a>
+      <a href="" ng-click="$event.preventDefault(); goTo('/contact')" class="nav-item">Contact</a>
+      <a href="" class="nav-item" ng-click="vm.logout()">Logout</a>
+    </nav>
+  </aside>
 
-      <!-- Main Content -->
-      <main class="main-content">
-        <!-- Currency Icon -->
-        <div class="currency-icon-container">
-          <button class="currency-icon-btn" ng-click="vm.openCurrencyDialog()">
-            <span>{{ vm.currentCurrency.symbol }}</span>
-          </button>
-        </div>
-
-        <!-- Currency Dialog -->
-        <div
-          id="currencyDialog"
-          class="currency-dialog"
-          ng-class="{'show': vm.showCurrencyDialog}"
-        >
-          <div class="currency-dialog-content">
-            <div class="currency-dialog-header">
-              <h3>Select Currency</h3>
-              <button class="close-btn" ng-click="vm.closeCurrencyDialog()">
-                &times;
-              </button>
-            </div>
-            <div class="currency-options">
-              <div
-                class="currency-option"
-                ng-repeat="currency in vm.currencies"
-                ng-click="vm.selectCurrency(currency)"
-                ng-class="{'selected': vm.currentCurrency.code === currency.code}"
-              >
-                <span class="currency-symbol">{{ currency.symbol }}</span>
-                <span class="currency-name">{{ currency.name }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Profile Content -->
-        <div class="content-page active">
-          <div class="page-header">
-            <h2>My Profile</h2>
-            <p>Manage your personal information</p>
-          </div>
-
-          <!-- Profile Card (Larger) -->
-          <div class="profile-card-large">
-            <div class="profile-avatar">
-              <div class="avatar-circle">
-                <span>{{ vm.user.name.charAt(0) }}</span>
-              </div>
-              <h3>{{ vm.user.name }}</h3>
-              <p class="member-since">
-                Member since {{ vm.user.memberSince | date:'MMMM yyyy' }}
-              </p>
-            </div>
-
-            <form name="profileForm" ng-submit="vm.updateProfile()" novalidate>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="fullName">Full Name</label>
-                  <input
-                    type="text"
-                    id="fullName"
-                    ng-model="vm.editUser.name"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="email">Email Address</label>
-                  <input
-                    type="email"
-                    id="email"
-                    ng-model="vm.editUser.email"
-                    required
-                  />
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="phone">Phone Number</label>
-                  <input type="tel" id="phone" ng-model="vm.editUser.phone" />
-                </div>
-                <div class="form-group">
-                  <label for="currencyPref">Preferred Currency</label>
-                  <select
-                    id="currencyPref"
-                    ng-model="vm.editUser.currency"
-                    ng-options="c.code as c.name for c in vm.currencies"
-                  ></select>
-                </div>
-              </div>
-
-              <div class="form-actions">
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  ng-disabled="profileForm.$invalid || vm.updating"
-                >
-                  <span ng-if="!vm.updating">Save Changes</span>
-                  <span ng-if="vm.updating">Saving...</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </main>
+  <main class="main-content">
+    <div class="currency-icon-container">
+      <button class="currency-icon-btn" ng-click="vm.openCurrencyDialog()">
+        <span>{{ vm.currentCurrency.symbol }}</span>
+      </button>
     </div>
 
-    <!-- Overlay -->
-    <div
-      id="overlay"
-      class="overlay"
-      ng-class="{'show': vm.sidebarOpen || vm.showCurrencyDialog}"
-      ng-click="vm.closeAllModals()"
-    ></div>
+    <div id="currencyDialog" class="currency-dialog" ng-class="{'show': vm.showCurrencyDialog}">
+      <div class="currency-dialog-content">
+        <div class="currency-dialog-header">
+          <h3>Select Currency</h3>
+          <button class="close-btn" ng-click="vm.closeCurrencyDialog()">&times;</button>
+        </div>
+        <div class="currency-options">
+          <div
+            class="currency-option"
+            ng-repeat="currency in vm.currencies"
+            ng-click="vm.selectCurrency(currency)"
+            ng-class="{'selected': vm.currentCurrency.code === currency.code}"
+          >
+            <span class="currency-symbol">{{ currency.symbol }}</span>
+            <span class="currency-name">{{ currency.name }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-page active">
+      <div class="page-header">
+        <h2>My Profile</h2>
+        <p>Manage your personal information</p>
+      </div>
+
+      <div class="profile-card-large">
+        <div class="profile-avatar">
+          <div class="avatar-circle">
+            <span>{{ vm.avatarLetter }}</span>
+          </div>
+          <h3>{{ vm.userName }}</h3>
+          <p class="member-since" ng-if="vm.memberSince">
+            Member since {{ vm.memberSince | date:'MMMM yyyy' }}
+          </p>
+        </div>
+
+        <form name="profileForm" ng-submit="vm.updateProfile()" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fullName">Full Name</label>
+              <input type="text" id="fullName" ng-model="vm.editUser.fullName" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" ng-model="vm.editUser.email" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" ng-model="vm.editUser.phone" />
+            </div>
+            <div class="form-group">
+              <label for="currencyPref">Preferred Currency</label>
+              <select
+                id="currencyPref"
+                ng-model="vm.editUser.currencyPreference"
+                ng-options="c.code as c.name for c in vm.currencies"
+              ></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="address">Address</label>
+              <input type="text" id="address" ng-model="vm.editUser.address" />
+            </div>
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" id="city" ng-model="vm.editUser.city" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="state">State</label>
+              <input type="text" id="state" ng-model="vm.editUser.state" />
+            </div>
+          </div>
+
+          <div class="form-actions" ng-if="vm.successMessage || vm.errorMessage">
+            <span ng-if="vm.successMessage">{{ vm.successMessage }}</span>
+            <span ng-if="vm.errorMessage">{{ vm.errorMessage }}</span>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              ng-disabled="profileForm.$invalid || vm.updating"
+            >
+              <span ng-if="!vm.updating">Save Changes</span>
+              <span ng-if="vm.updating">Saving...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div
+  id="overlay"
+  class="overlay"
+  ng-class="{'show': vm.sidebarOpen || vm.showCurrencyDialog}"
+  ng-click="vm.closeAllModals()"
+></div>

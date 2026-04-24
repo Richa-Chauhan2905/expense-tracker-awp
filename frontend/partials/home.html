@@ -36,26 +36,27 @@
           </div>
           <nav class="sidebar-nav">
             <a
-              href="home.html"
+              href=""
+              ng-click="$event.preventDefault(); goTo('/home')"
               class="nav-item"
               ng-class="{'active': vm.currentPage === 'home'}"
             >
               <span class="nav-icon">🏠</span>
               Home
             </a>
-            <a href="manage-expenses.html" class="nav-item">
+            <a href="" ng-click="$event.preventDefault(); goTo('/manage-expenses')" class="nav-item">
               <span class="nav-icon">💰</span>
               Manage Expenses
             </a>
-            <a href="expense-report.html" class="nav-item">
+            <a href="" ng-click="$event.preventDefault(); goTo('/expense-report')" class="nav-item">
               <span class="nav-icon">📊</span>
               Expense Report
             </a>
-            <a href="profile.html" class="nav-item">
+            <a href="" ng-click="$event.preventDefault(); goTo('/profile')" class="nav-item">
               <span class="nav-icon">👤</span>
               Profile
             </a>
-            <a href="contact.html" class="nav-item">
+            <a href="" ng-click="$event.preventDefault(); goTo('/contact')" class="nav-item">
               <span class="nav-icon">📧</span>
               Contact
             </a>
@@ -286,7 +287,7 @@
             <div class="recent-expenses-preview">
               <div class="preview-header">
                 <h3>Recent Expenses</h3>
-                <a href="manage-expenses.html" class="view-all-link"
+                <a href="" ng-click="$event.preventDefault(); goTo('/manage-expenses')" class="view-all-link"
                   >View All →</a
                 >
               </div>
@@ -309,7 +310,7 @@
                   </div>
                   <div class="expense-category">
                     <span class="category-badge category-{{ expense.category }}">
-                      {{ expense.category | capitalize }}
+                      {{ vm.formatCategory(expense.category) }}
                     </span>
                   </div>
                   <div class="expense-description">{{ expense.description }}</div>

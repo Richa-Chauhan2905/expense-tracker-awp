@@ -2,7 +2,7 @@ app.service("AuthService", [
   "$http",
   "$q",
   function ($http, $q) {
-    var API_BASE = "http://localhost:5000/api/users";
+    var API_BASE = API_ROOT + "/users";
     var currentUser = null;
 
     this.login = function (credentials) {

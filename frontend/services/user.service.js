@@ -1,7 +1,7 @@
 app.service("UserService", [
   "$http",
   function ($http) {
-    var API_BASE = "http://localhost:5000/api/users";
+    var API_BASE = API_ROOT + "/users";
 
     this.updateProfile = function (profileData) {
       return $http.put(API_BASE + "/profile", profileData);

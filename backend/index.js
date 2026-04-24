@@ -23,6 +23,9 @@ app.use(
       "http://127.0.0.1:5173",
       "http://localhost:5500",
       "http://127.0.0.1:5500",
+      "http://localhost:4200",
+      "http://127.0.0.1:4200",
+      "http://192.168.29.74:4200",
     ],
     credentials: true,
   }),
@@ -47,5 +50,5 @@ const PORT = process.env.PORT || 5000;
 
 await connectDB();
 app.listen(PORT, () => {
-  console.log(`✅ Listening on port ${PORT}`);
+  console.log(`Listening on port ${PORT}`);
 });
