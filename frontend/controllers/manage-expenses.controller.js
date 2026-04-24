@@ -46,6 +46,34 @@ app.controller("ManageExpensesController", [
       { value: "other", label: "Other" },
     ];
     vm.editExpense = {};
+    vm.originalEditExpenseDate = "";
+
+    function toInputDate(value) {
+      if (!value) {
+        return "";
+      }
+
+      if (typeof value === "string") {
+        return value.slice(0, 10);
+      }
+
+      var date = new Date(value);
+      if (isNaN(date.getTime())) {
+        return "";
+      }
+
+      return date.toISOString().slice(0, 10);
+    }
+
+    function toDateObject(value) {
+      var normalized = toInputDate(value);
+      if (!normalized) {
+        return null;
+      }
+
+      var parts = normalized.split("-").map(Number);
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
 
     function normalizeExpense(expense) {
       return {
@@ -183,17 +211,27 @@ app.controller("ManageExpensesController", [
 
     vm.openEditModal = function (expense) {
       vm.editExpense = angular.copy(expense);
+      vm.originalEditExpenseDate = toInputDate(
+        expense && (expense.expenseDate || expense.date),
+      );
+      vm.editExpense.expenseDate = toDateObject(
+        vm.editExpense.expenseDate || vm.editExpense.date || vm.originalEditExpenseDate,
+      );
       vm.showEditModal = true;
     };
 
     vm.closeEditModal = function () {
       vm.editExpense = {};
+      vm.originalEditExpenseDate = "";
       vm.showEditModal = false;
     };
 
     vm.saveEdit = function () {
+      var expenseDate =
+        toInputDate(vm.editExpense.expenseDate) || vm.originalEditExpenseDate;
+
       var updatedData = {
-        expenseDate: vm.editExpense.expenseDate,
+        expenseDate: expenseDate,
         amount: vm.editExpense.amount,
         title: vm.editExpense.description,
         category: vm.editExpense.category,

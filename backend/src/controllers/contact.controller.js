@@ -30,3 +30,17 @@ export const createTicket = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+// GET /api/contact/tickets
+export const getTickets = async (req, res) => {
+  try {
+    const tickets = await ContactTicket.find()
+      .sort({ createdAt: -1 })
+      .populate("user", "fullName email");
+
+    return res.status(200).json(tickets);
+  } catch (error) {
+    console.log("Error in getTickets:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

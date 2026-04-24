@@ -128,6 +128,11 @@ app.config([
         controller: "ContactController",
         controllerAs: "vm",
       })
+      .when("/admin-tickets", {
+        templateUrl: "partials/admin-tickets.html",
+        controller: "AdminTicketsController",
+        controllerAs: "vm",
+      })
       .otherwise({ redirectTo: "/login" });
   },
 ]);

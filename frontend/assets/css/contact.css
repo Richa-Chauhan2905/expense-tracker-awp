@@ -210,3 +210,133 @@
     width: 100%;
   }
 }
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-error-banner {
+  margin-top: 1.5rem;
+  padding: 1rem 1.2rem;
+  border-radius: 18px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  color: #fecaca;
+}
+
+.tickets-board {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.ticket-card {
+  background: rgba(26, 30, 40, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 26px;
+  padding: 1.5rem;
+}
+
+.ticket-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ticket-card-header h3 {
+  color: #e9edf2;
+  margin: 0 0 0.25rem;
+  font-size: 1.1rem;
+}
+
+.ticket-card-header p {
+  margin: 0;
+  color: #9aa5bf;
+  font-size: 0.9rem;
+}
+
+.ticket-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.ticket-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.ticket-badge-issue {
+  background: rgba(59, 130, 246, 0.14);
+  color: #bfdbfe;
+}
+
+.ticket-badge-status {
+  background: rgba(148, 163, 184, 0.14);
+  color: #dbe4f0;
+}
+
+.ticket-badge-urgency {
+  color: #fef3c7;
+}
+
+.ticket-urgency-low {
+  background: rgba(34, 197, 94, 0.14);
+}
+
+.ticket-urgency-medium {
+  background: rgba(245, 158, 11, 0.14);
+}
+
+.ticket-urgency-high {
+  background: rgba(249, 115, 22, 0.16);
+}
+
+.ticket-urgency-urgent {
+  background: rgba(239, 68, 68, 0.16);
+}
+
+.ticket-meta {
+  color: #94a3b8;
+  font-size: 0.82rem;
+  margin-bottom: 0.9rem;
+}
+
+.ticket-message {
+  margin: 0;
+  color: #e9edf2;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.tickets-empty {
+  background: rgba(26, 30, 40, 0.7);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 2rem;
+  text-align: center;
+  color: #9aa5bf;
+}
+
+@media (max-width: 768px) {
+  .ticket-card-header {
+    flex-direction: column;
+  }
+
+  .ticket-badges {
+    justify-content: flex-start;
+  }
+}
