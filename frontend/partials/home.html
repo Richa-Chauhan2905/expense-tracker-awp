@@ -41,27 +41,21 @@
               class="nav-item"
               ng-class="{'active': vm.currentPage === 'home'}"
             >
-              <span class="nav-icon">🏠</span>
               Home
             </a>
             <a href="" ng-click="$event.preventDefault(); goTo('/manage-expenses')" class="nav-item">
-              <span class="nav-icon">💰</span>
               Manage Expenses
             </a>
             <a href="" ng-click="$event.preventDefault(); goTo('/expense-report')" class="nav-item">
-              <span class="nav-icon">📊</span>
               Expense Report
             </a>
             <a href="" ng-click="$event.preventDefault(); goTo('/profile')" class="nav-item">
-              <span class="nav-icon">👤</span>
               Profile
             </a>
             <a href="" ng-click="$event.preventDefault(); goTo('/contact')" class="nav-item">
-              <span class="nav-icon">📧</span>
               Contact
             </a>
             <a href="#" class="nav-item" ng-click="vm.openLogoutModal()">
-              <span class="nav-icon">🚪</span>
               Logout
             </a>
           </nav>
